@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScoreAvenue — Live Sports Scores</title>
+<meta name="description" content="Live scores for football, basketball, tennis and all major sports. Updated every minute.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh}
+a{color:inherit;text-decoration:none}
+
+/* NAVBAR */
+.nav{position:sticky;top:0;z-index:50;background:rgba(8,8,8,0.95);border-bottom:1px solid #1a1a1a;backdrop-filter:blur(8px)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{display:flex;align-items:center;gap:0;cursor:pointer}
+.logo svg{display:block}
+.nav-links{display:flex;gap:4px}
+.nav-link{padding:6px 12px;font-size:13px;color:#888;border-radius:8px;transition:all 0.15s;cursor:pointer}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,0.05)}
+.nav-link.active{color:#fff}
+.nav-right{display:flex;align-items:center;gap:8px}
+.btn-signup{padding:6px 14px;background:#FF3B30;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:background 0.15s}
+.btn-signup:hover{background:#E02D22}
+.search-btn{padding:8px;background:transparent;border:none;color:#888;cursor:pointer;border-radius:8px}
+.search-btn:hover{color:#fff;background:rgba(255,255,255,0.05)}
+
+/* TICKER */
+.ticker{background:#FF3B30;padding:8px 16px;display:flex;align-items:center;gap:12px;overflow:hidden}
+.ticker-label{font-size:10px;font-weight:700;letter-spacing:2px;color:#fff;white-space:nowrap}
+.ticker-divider{width:1px;height:12px;background:rgba(255,255,255,0.3);flex-shrink:0}
+.ticker-text{font-size:12px;color:#fff;font-weight:500;white-space:nowrap;animation:ticker 20s linear infinite}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;padding:24px 16px}
+.layout{display:flex;gap:24px}
+.feed{flex:1;min-width:0}
+.sidebar{width:280px;flex-shrink:0}
+@media(max-width:900px){.layout{flex-direction:column}.sidebar{width:100%}}
+@media(max-width:600px){.nav-links{display:none}.sidebar{display:none}}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.page-title{font-size:20px;font-weight:700}
+.page-sub{font-size:13px;color:#555;margin-top:2px}
+.live-now{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#FF3B30;background:rgba(255,59,48,0.1);padding:6px 12px;border-radius:20px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#FF3B30;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
+
+/* COUNTRY BAR */
+.country-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;position:relative}
+.country-btn{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#111;border:1px solid #2a2a2a;border-radius:8px;cursor:pointer;transition:border-color 0.15s}
+.country-btn:hover{border-color:#444}
+.country-label{font-size:12px;color:#888}
+.country-sub{font-size:11px;color:#555}
+
+/* SPORT TABS */
+.sport-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.sport-tabs::-webkit-scrollbar{display:none}
+.sport-tab{position:relative;display:flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;border:1px solid #2a2a2a;font-size:13px;font-weight:500;color:#888;cursor:pointer;transition:all 0.15s;white-space:nowrap;background:transparent}
+.sport-tab:hover{border-color:#444;color:#fff}
+.sport-tab.active{background:#FF3B30;border-color:#FF3B30;color:#fff}
+.tab-badge{position:absolute;top:-6px;right:-6px;font-size:8px;font-weight:700;padding:1px 4px;border-radius:10px;background:#FF3B30;color:#fff}
+.sport-tab.active .tab-badge{background:#fff;color:#FF3B30}
+
+/* TOP LEAGUES */
+.top-leagues{display:flex;align-items:center;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.top-leagues::-webkit-scrollbar{display:none}
+.league-chip{font-size:11px;color:#888;background:#111;border:1px solid #2a2a2a;padding:4px 10px;border-radius:20px;white-space:nowrap;cursor:pointer;transition:all 0.15s}
+.league-chip:hover{border-color:#444;color:#fff}
+.league-chip-label{font-size:10px;color:#555;flex-shrink:0}
+
+/* FILTERS */
+.filters{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{padding:4px 12px;border-radius:20px;border:1px solid #2a2a2a;font-size:12px;font-weight:500;color:#555;cursor:pointer;transition:all 0.15s;background:transparent}
+.filter-btn:hover{border-color:#444;color:#888}
+.filter-btn.active{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.1);color:#fff}
+.filter-btn.active-live{background:#FF3B30;border-color:#FF3B30;color:#fff}
+.date-nav{display:flex;align-items:center;gap:4px;margin-left:auto}
+.date-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid #2a2a2a;border-radius:8px;color:#555;cursor:pointer;font-size:14px;background:transparent;transition:all 0.15s}
+.date-btn:hover{color:#fff;border-color:#444}
+.date-label{font-size:12px;color:#888;min-width:60px;text-align:center;font-weight:500}
+
+/* LEAGUE BLOCK */
+.league-block{border:1px solid #1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:12px}
+.league-header{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#111;cursor:pointer;transition:background 0.1s}
+.league-header:hover{background:#151515}
+.league-flag{font-size:16px;line-height:1}
+.league-name{font-size:13px;font-weight:500;flex:1}
+.league-country{font-size:11px;color:#555;margin-left:4px}
+.league-live-count{font-size:10px;font-weight:700;color:#FF3B30;background:rgba(255,59,48,0.1);padding:2px 8px;border-radius:4px}
+.league-match-count{font-size:11px;color:#555}
+.league-chevron{font-size:12px;color:#555;transition:transform 0.2s}
+.league-chevron.open{transform:rotate(180deg)}
+
+/* MATCH ROW */
+.matches{border-top:1px solid #111}
+.match-row{display:grid;grid-template-columns:48px 1fr auto 1fr 44px;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #111;cursor:pointer;transition:background 0.1s}
+.match-row:last-child{border-bottom:none}
+.match-row:hover{background:rgba(255,255,255,0.02)}
+.match-row.live-row{border-left:2px solid #FF3B30}
+.match-time{text-align:center}
+.live-badge{display:inline-flex;align-items:center;gap:5px;padding:2px 7px;background:rgba(255,59,48,0.15);color:#FF3B30;font-size:10px;font-weight:700;border-radius:4px}
+.live-badge-dot{width:5px;height:5px;border-radius:50%;background:#FF3B30;animation:pulse 1.5s infinite}
+.ht-badge{display:inline-flex;padding:2px 6px;background:#2a2a2a;color:#888;font-size:10px;font-weight:500;border-radius:4px}
+.ft-text{font-size:11px;color:#555;font-weight:500}
+.ns-time{font-size:11px;color:#888}
+.team-home{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.team-away{display:flex;align-items:center;gap:8px}
+.team-crest{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.team-name{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.team-name.winner{font-weight:600}
+.team-name.loser{color:#555}
+.score-mid{display:flex;align-items:center;gap:3px;justify-content:center;min-width:54px}
+.score-box{width:24px;height:24px;border-radius:4px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.score-box.win{background:#1a3a1a;color:#22c55e}
+.score-box.loss{color:#555}
+.score-sep{font-size:10px;color:#2a2a2a}
+.vs-text{font-size:13px;color:#555;letter-spacing:2px}
+.red-card{width:8px;height:10px;background:#FF3B30;border-radius:1px;flex-shrink:0}
+.match-actions{display:flex;align-items:center;justify-content:center;gap:6px}
+.bell-btn{background:transparent;border:none;color:#555;cursor:pointer;font-size:14px;padding:2px;transition:color 0.15s}
+.bell-btn:hover{color:#FF3B30}
+
+/* STATS */
+.match-stats{padding:10px 12px;border-top:1px solid #111;background:#0a0a0a}
+.stat-row{margin-bottom:8px}
+.stat-labels{display:flex;justify-content:space-between;font-size:11px;color:#555;margin-bottom:4px}
+.stat-label-center{text-align:center;color:#444}
+.stat-bars{display:flex;gap:4px;height:3px}
+.stat-bar{flex:1;background:#2a2a2a;border-radius:2px;overflow:hidden}
+.stat-fill-home{height:100%;background:#FF3B30;border-radius:2px;float:right}
+.stat-fill-away{height:100%;background:#3b82f6;border-radius:2px}
+
+/* SIDEBAR */
+.widget{border:1px solid #1a1a1a;border-radius:12px;padding:16px;margin-bottom:16px}
+.widget-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.widget-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.widget-title{font-size:13px;font-weight:600}
+.widget-badge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:#FF3B30;color:#fff}
+.widget-sub{font-size:10px;color:#555;margin-left:auto}
+.ai-text{font-size:12px;color:#888;line-height:1.6;margin-bottom:10px}
+.ai-highlight{color:#22c55e;font-weight:600}
+.prob-row{display:flex;gap:8px;margin-bottom:12px}
+.prob-box{flex:1;background:#1a1a1a;border-radius:8px;padding:8px;text-align:center}
+.prob-pct{font-size:14px;font-weight:700;color:#fff}
+.prob-lbl{font-size:10px;color:#555;margin-top:2px}
+.btn-unlock{width:100%;padding:8px;background:#FF3B30;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s}
+.btn-unlock:hover{background:#E02D22}
+.fan-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.fan-item{display:flex;gap:8px}
+.fan-avatar{width:24px;height:24px;border-radius:50%;background:#2a2a2a;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.fan-name{font-size:11px;font-weight:600}
+.fan-flag{font-size:9px}
+.fan-time{font-size:10px;color:#555;margin-left:auto}
+.fan-msg{font-size:11px;color:#888;margin-top:2px;line-height:1.4}
+.fan-input-row{display:flex;gap:8px}
+.fan-input{flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:6px 10px;font-size:12px;color:#fff;outline:none;transition:border-color 0.15s}
+.fan-input:focus{border-color:#FF3B30}
+.fan-input::placeholder{color:#555}
+.btn-send{padding:6px 12px;background:#FF3B30;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer}
+.scorer-row{display:flex;align-items:center;gap:8px;padding:4px 0}
+.scorer-rank{font-size:11px;color:#555;width:14px}
+.scorer-flag{font-size:10px}
+.scorer-name{font-size:12px;flex:1}
+.scorer-team{font-size:11px;color:#555}
+.scorer-goals{font-size:12px;font-weight:700;width:20px;text-align:right}
+.alert-widget{border-color:rgba(255,59,48,0.2);background:rgba(255,59,48,0.03)}
+.btn-alert{width:100%;padding:8px;background:transparent;border:1px solid #FF3B30;color:#FF3B30;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.btn-alert:hover{background:#FF3B30;color:#fff}
+
+/* FOOTER */
+footer{border-top:1px solid #1a1a1a;padding:40px 16px;margin-top:48px}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-bottom:32px}
+@media(max-width:600px){.footer-grid{grid-template-columns:repeat(2,1fr)}}
+.footer-heading{font-size:13px;font-weight:600;margin-bottom:12px}
+.footer-link{display:block;font-size:13px;color:#555;margin-bottom:8px;transition:color 0.15s;cursor:pointer}
+.footer-link:hover{color:#fff}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:24px;border-top:1px solid #1a1a1a;flex-wrap:gap}
+.footer-logo{font-size:14px;font-weight:700}
+.footer-copy{font-size:12px;color:#555}
+.footer-socials{display:flex;gap:12px}
+.footer-social{font-size:13px;color:#555;transition:color 0.15s;cursor:pointer}
+.footer-social:hover{color:#fff}
+
+/* COUNTRY DROPDOWN */
+.country-dropdown{position:absolute;top:44px;left:0;z-index:100;background:#111;border:1px solid #2a2a2a;border-radius:12px;width:220px;max-height:260px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+.country-option{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;transition:background 0.1s}
+.country-option:hover{background:rgba(255,255,255,0.05)}
+.country-option.selected{background:rgba(255,59,48,0.1)}
+.country-option-flag{font-size:14px}
+.country-option-name{font-size:12px;color:#888}
+.country-option-name.selected{color:#FF3B30;font-weight:500}
+.country-check{font-size:10px;color:#FF3B30;margin-left:auto}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <svg viewBox="0 0 180 40" width="180" height="40">
+        <defs>
+          <linearGradient id="lg" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FF3B30"/>
+            <stop offset="49.9%" stop-color="#FF3B30"/>
+            <stop offset="50%" stop-color="#C9200F"/>
+            <stop offset="100%" stop-color="#C9200F"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="38" height="38" rx="8" fill="url(#lg)"/>
+        <line x1="0" y1="19" x2="38" y2="19" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
+        <text x="19" y="27" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="22" font-weight="900" fill="#fff">S</text>
+        <text x="46" y="22" font-family="Arial Black,Arial,sans-serif" font-size="16" font-weight="900" fill="#fff" letter-spacing="-0.5">Score</text>
+        <text x="47" y="35" font-family="Arial,sans-serif" font-size="7.5" font-weight="300" fill="#FF3B30" letter-spacing="3.5">AVENUE</text>
+      </svg>
+    </div>
+    <nav class="nav-links">
+      <span class="nav-link active" onclick="switchSport('football')">Football</span>
+      <span class="nav-link" onclick="switchSport('basketball')">Basketball</span>
+      <span class="nav-link" onclick="switchSport('tennis')">Tennis</span>
+      <span class="nav-link" onclick="switchSport('hockey')">Hockey</span>
+      <span class="nav-link" onclick="switchSport('baseball')">Baseball</span>
+    </nav>
+    <div class="nav-right">
+      <button class="search-btn" onclick="toggleSearch()">🔍</button>
+      <button class="btn-signup">Sign up</button>
+    </div>
+  </div>
+</header>
+
+<!-- TICKER -->
+<div class="ticker">
+  <span class="ticker-label">⚡ BREAKING</span>
+  <div class="ticker-divider"></div>
+  <div class="ticker-text" id="tickerText"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="layout">
+    <div class="feed">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Live Scores</h1>
+          <p class="page-sub">Updated every minute · Sports ranked for your country</p>
+        </div>
+        <div class="live-now"><span class="live-dot"></span>LIVE NOW</div>
+      </div>
+
+      <!-- COUNTRY BAR -->
+      <div class="country-bar">
+        <div class="country-btn" onclick="toggleCountryPicker()">
+          <span id="countryFlag" style="font-size:16px">🌍</span>
+          <span class="country-label" id="countryName">Detecting...</span>
+          <span style="font-size:12px;color:#555">▾</span>
+        </div>
+        <span class="country-sub">Sports ranked for your country</span>
+        <div class="country-dropdown" id="countryDropdown" style="display:none"></div>
+      </div>
+
+      <!-- SPORT TABS -->
+      <div class="sport-tabs" id="sportTabs"></div>
+
+      <!-- TOP LEAGUES -->
+      <div class="top-leagues" id="topLeagues"></div>
+
+      <!-- FILTERS -->
+      <div class="filters">
+        <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-btn" onclick="setFilter('live',this)" id="liveFilterBtn">
+          <span id="liveBtnInner">Live</span>
+        </button>
+        <button class="filter-btn" onclick="setFilter('finished',this)">Finished</button>
+        <button class="filter-btn" onclick="setFilter('upcoming',this)">Upcoming</button>
+        <div class="date-nav">
+          <button class="date-btn" onclick="changeDay(-1)">‹</button>
+          <span class="date-label" id="dateLabel">Today</span>
+          <button class="date-btn" onclick="changeDay(1)">›</button>
+        </div>
+      </div>
+
+      <!-- SCORES FEED -->
+      <div id="scoresFeed"></div>
+
+      <!-- FOOTER BAR -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid #1a1a1a;margin-top:8px">
+        <span style="font-size:11px;color:#555" id="matchCount">0 matches</span>
+        <button onclick="refreshScores()" style="display:flex;align-items:center;gap:6px;font-size:11px;color:#555;background:transparent;border:none;cursor:pointer" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#555'">
+          ↻ Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <!-- AI PREVIEW -->
+      <div class="widget" style="background:linear-gradient(135deg,#111,#0d0d0d)">
+        <div class="widget-header">
+          <div class="widget-icon" style="background:rgba(255,59,48,0.1)">🧠</div>
+          <span class="widget-title">AI Match Preview</span>
+          <span class="widget-badge">PRO</span>
+        </div>
+        <p class="ai-text">Arsenal enter this match in exceptional form — 8 wins in last 10. Man City missing Rodri. AI gives Arsenal a <span class="ai-highlight">67% win probability</span>.</p>
+        <div class="prob-row">
+          <div class="prob-box"><div class="prob-pct">67%</div><div class="prob-lbl">Arsenal</div></div>
+          <div class="prob-box"><div class="prob-pct">18%</div><div class="prob-lbl">Draw</div></div>
+          <div class="prob-box"><div class="prob-pct">15%</div><div class="prob-lbl">Man City</div></div>
+        </div>
+        <button class="btn-unlock">Unlock AI Predictions</button>
+      </div>
+
+      <!-- FAN BOX -->
+      <div class="widget">
+        <div class="widget-header">
+          <div class="widget-icon" style="background:rgba(59,130,246,0.1)">👥</div>
+          <span class="widget-title">Fan Box</span>
+          <span class="widget-sub">1,284 online</span>
+        </div>
+        <div class="fan-list">
+          <div class="fan-item">
+            <div class="fan-avatar">G</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:4px"><span class="fan-name">GoalMachine</span><span class="fan-flag">🏴</span><span class="fan-time">2m</span></div>
+              <div class="fan-msg">Saka has been unreal today 🔥</div>
+            </div>
+          </div>
+          <div class="fan-item">
+            <div class="fan-avatar">M</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:4px"><span class="fan-name">MadridFan99</span><span class="fan-flag">🇪🇸</span><span class="fan-time">3m</span></div>
+              <div class="fan-msg">Bellingham saving us again!!!</div>
+            </div>
+          </div>
+          <div class="fan-item">
+            <div class="fan-avatar">D</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:4px"><span class="fan-name">DZFootball</span><span class="fan-flag">🇩🇿</span><span class="fan-time">5m</span></div>
+              <div class="fan-msg">Mahrez would score that easily 🇩🇿</div>
+            </div>
+          </div>
+        </div>
+        <div class="fan-input-row">
+          <input class="fan-input" placeholder="Share your reaction..."/>
+          <button class="btn-send">Send</button>
+        </div>
+      </div>
+
+      <!-- TOP SCORERS -->
+      <div class="widget">
+        <div class="widget-header">
+          <span style="font-size:16px">⚽</span>
+          <span class="widget-title" style="margin-left:4px">Top Scorers</span>
+          <span class="widget-sub">Premier League</span>
+        </div>
+        <div>
+          <div class="scorer-row"><span class="scorer-rank">1</span><span class="scorer-flag">🇳🇴</span><span class="scorer-name">Haaland</span><span class="scorer-team">Man City</span><span class="scorer-goals">27</span></div>
+          <div class="scorer-row"><span class="scorer-rank">2</span><span class="scorer-flag">🇪🇬</span><span class="scorer-name">Salah</span><span class="scorer-team">Liverpool</span><span class="scorer-goals">24</span></div>
+          <div class="scorer-row"><span class="scorer-rank">3</span><span class="scorer-flag">🏴</span><span class="scorer-name">Saka</span><span class="scorer-team">Arsenal</span><span class="scorer-goals">18</span></div>
+          <div class="scorer-row"><span class="scorer-rank">4</span><span class="scorer-flag">🏴</span><span class="scorer-name">Palmer</span><span class="scorer-team">Chelsea</span><span class="scorer-goals">17</span></div>
+          <div class="scorer-row"><span class="scorer-rank">5</span><span class="scorer-flag">🏴</span><span class="scorer-name">Watkins</span><span class="scorer-team">Aston Villa</span><span class="scorer-goals">15</span></div>
+        </div>
+      </div>
+
+      <!-- ALERTS -->
+      <div class="widget alert-widget">
+        <div class="widget-header">
+          <span style="font-size:16px">🔔</span>
+          <span class="widget-title" style="margin-left:4px">Smart Alerts</span>
+        </div>
+        <p style="font-size:12px;color:#888;margin-bottom:12px;line-height:1.6">Get notified for goals, red cards, and final scores instantly.</p>
+        <button class="btn-alert">Enable Alerts</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <h3 class="footer-heading">Sports</h3>
+        <span class="footer-link">Football</span><span class="footer-link">Basketball</span><span class="footer-link">Tennis</span><span class="footer-link">Hockey</span><span class="footer-link">Baseball</span><span class="footer-link">Rugby</span>
+      </div>
+      <div>
+        <h3 class="footer-heading">Leagues</h3>
+        <span class="footer-link">Premier League</span><span class="footer-link">Champions League</span><span class="footer-link">La Liga</span><span class="footer-link">Serie A</span><span class="footer-link">Bundesliga</span><span class="footer-link">Ligue 1</span>
+      </div>
+      <div>
+        <h3 class="footer-heading">Features</h3>
+        <span class="footer-link">Live Scores</span><span class="footer-link">AI Predictions</span><span class="footer-link">Fantasy Teams</span><span class="footer-link">Fan Box</span><span class="footer-link">Breaking News</span><span class="footer-link">Alerts</span>
+      </div>
+      <div>
+        <h3 class="footer-heading">Company</h3>
+        <span class="footer-link">About</span><span class="footer-link">Blog</span><span class="footer-link">Privacy</span><span class="footer-link">Terms</span><span class="footer-link">Contact</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-logo">ScoreAvenue</span>
+      <span class="footer-copy">© 2026 ScoreAvenue. All rights reserved.</span>
+      <div class="footer-socials">
+        <span class="footer-social">𝕏</span>
+        <span class="footer-social">Instagram</span>
+        <span class="footer-social">Facebook</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const COUNTRIES = {
+  DZ:{name:'Algeria',flag:'🇩🇿',sports:['football','basketball','tennis','hockey','baseball'],leagues:['Ligue Pro 1','Coupe d\'Algérie']},
+  MA:{name:'Morocco',flag:'🇲🇦',sports:['football','basketball','tennis','hockey','baseball'],leagues:['Botola Pro','Coupe du Trône']},
+  FR:{name:'France',flag:'🇫🇷',sports:['football','basketball','tennis','hockey','baseball'],leagues:['Ligue 1','Coupe de France']},
+  ES:{name:'Spain',flag:'🇪🇸',sports:['football','basketball','tennis','hockey','baseball'],leagues:['La Liga','Copa del Rey']},
+  GB:{name:'England',flag:'🏴',sports:['football','basketball','tennis','hockey','baseball'],leagues:['Premier League','FA Cup']},
+  DE:{name:'Germany',flag:'🇩🇪',sports:['football','basketball','tennis','hockey','baseball'],leagues:['Bundesliga','DFB-Pokal']},
+  IT:{name:'Italy',flag:'🇮🇹',sports:['football','basketball','tennis','hockey','baseball'],leagues:['Serie A','Coppa Italia']},
+  US:{name:'USA',flag:'🇺🇸',sports:['basketball','baseball','football','hockey','tennis'],leagues:['NBA','NFL','MLB','NHL']},
+  BR:{name:'Brazil',flag:'🇧🇷',sports:['football','basketball','tennis','hockey','baseball'],leagues:['Brasileirão','Copa do Brasil']},
+  AR:{name:'Argentina',flag:'🇦🇷',sports:['football','basketball','tennis','hockey','baseball'],leagues:['Liga Profesional','Copa Argentina']},
+  JP:{name:'Japan',flag:'🇯🇵',sports:['baseball','football','basketball','tennis','hockey'],leagues:['NPB','J1 League']},
+  IN:{name:'India',flag:'🇮🇳',sports:['cricket','football','basketball','tennis','hockey'],leagues:['IPL','ISL']},
+  DEFAULT:{name:'Global',flag:'🌍',sports:['football','basketball','tennis','hockey','baseball'],leagues:['Champions League','Premier League','NBA']}
+}
+
+const SPORTS_META = {
+  football:  {label:'Football',  emoji:'⚽'},
+  basketball:{label:'Basketball',emoji:'🏀'},
+  tennis:    {label:'Tennis',    emoji:'🎾'},
+  hockey:    {label:'Hockey',    emoji:'🏒'},
+  baseball:  {label:'Baseball',  emoji:'⚾'},
+  cricket:   {label:'Cricket',   emoji:'🏏'}
+}
+
+const FOOTBALL_DATA = [
+  {
+    league:{id:39,name:'Premier League',country:'England',flag:'🏴'},
+    matches:[
+      {id:1001,home:{name:'Arsenal',color:'#EF0107'},away:{name:'Man City',color:'#6CABDD'},hs:2,as:1,status:'2H',elapsed:67,events:[{t:23,team:'h',type:'goal'},{t:61,team:'h',type:'goal'},{t:65,team:'a',type:'goal'}],stats:[{l:'Shots',h:14,a:9},{l:'Possession',h:48,a:52},{l:'Corners',h:6,a:4}]},
+      {id:1002,home:{name:'Liverpool',color:'#C8102E'},away:{name:'Chelsea',color:'#034694'},hs:1,as:1,status:'HT',elapsed:45,events:[],stats:[{l:'Shots',h:7,a:6}]},
+      {id:1003,home:{name:'Tottenham',color:'#132257'},away:{name:'Man United',color:'#DA291C'},hs:3,as:0,status:'FT',elapsed:90,events:[],stats:[]},
+      {id:1004,home:{name:'Everton',color:'#003399'},away:{name:'Wolves',color:'#FDB913'},hs:null,as:null,status:'NS',elapsed:null,time:'19:45',events:[],stats:[]}
+    ]
+  },
+  {
+    league:{id:2,name:'UEFA Champions League',country:'Europe',flag:'🇪🇺'},
+    matches:[
+      {id:2001,home:{name:'Real Madrid',color:'#FEBE10'},away:{name:'Bayern Munich',color:'#DC052D'},hs:2,as:2,status:'2H',elapsed:81,events:[{t:55,team:'a',type:'red'}],stats:[{l:'Shots',h:11,a:8},{l:'Possession',h:55,a:45}]},
+      {id:2002,home:{name:'PSG',color:'#004170'},away:{name:'Dortmund',color:'#FDE100'},hs:null,as:null,status:'NS',elapsed:null,time:'21:00',events:[],stats:[]}
+    ]
+  },
+  {
+    league:{id:140,name:'La Liga',country:'Spain',flag:'🇪🇸'},
+    matches:[
+      {id:3001,home:{name:'Barcelona',color:'#A50044'},away:{name:'Atletico Madrid',color:'#CB3524'},hs:1,as:0,status:'FT',elapsed:90,events:[],stats:[]}
+    ]
+  },
+  {
+    league:{id:61,name:'Ligue 1',country:'France',flag:'🇫🇷'},
+    matches:[
+      {id:4001,home:{name:'Monaco',color:'#D4000D'},away:{name:'Lyon',color:'#003F8E'},hs:0,as:0,status:'1H',elapsed:32,events:[],stats:[{l:'Shots',h:4,a:3}]}
+    ]
+  }
+]
+
+const NBA_DATA = [
+  {
+    league:{id:12,name:'NBA',country:'USA',flag:'🇺🇸'},
+    matches:[
+      {id:5001,home:{name:'Boston Celtics',color:'#007A33'},away:{name:'LA Lakers',color:'#552583'},hs:98,as:94,status:'2H',elapsed:null,time:'Q4 3:12',events:[],stats:[{l:'FG%',h:'48%',a:'43%'},{l:'Rebounds',h:44,a:39}]},
+      {id:5002,home:{name:'Golden State',color:'#1D428A'},away:{name:'Denver Nuggets',color:'#0E2240'},hs:102,as:109,status:'FT',elapsed:null,events:[],stats:[]}
+    ]
+  }
+]
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let state = {
+  sport: 'football',
+  filter: 'all',
+  day: 0,
+  country: 'DEFAULT',
+  expandedMatches: new Set(),
+  showCountryPicker: false
+}
+
+const DAY_LABELS = {'-2':'2 days ago','-1':'Yesterday','0':'Today','1':'Tomorrow','2':'In 2 days'}
+
+// ── TICKER ────────────────────────────────────────────────────────────────
+const NEWS = [
+  "🔴 GOAL — Arsenal 2-1 Man City · Martinelli 61'  |  ",
+  "⚽ GOAL — Real Madrid 2-2 Bayern · Vinicius 79'  |  ",
+  "🟥 RED CARD — Kimmich (Bayern) 55'  |  ",
+  "🔴 GOAL — Liverpool 1-0 Chelsea · Salah 34'  |  ",
+  "⚽ HT — Monaco 0-0 Lyon  |  ",
+  "📋 LINEUPS OUT — PSG vs Dortmund 21:00  |  ",
+  "🏀 LIVE — Boston Celtics 98-94 LA Lakers · Q4  |  "
+]
+document.getElementById('tickerText').textContent = NEWS.join('') + NEWS.join('')
+
+// ── COUNTRY DETECT ────────────────────────────────────────────────────────
+async function detectCountry() {
+  const saved = localStorage.getItem('sa_country')
+  if (saved && COUNTRIES[saved]) { setCountry(saved); return }
+  try {
+    const r = await fetch('https://ipapi.co/json/')
+    const d = await r.json()
+    setCountry(d.country_code || 'DEFAULT')
+  } catch {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const map = {'Africa/Algiers':'DZ','Africa/Casablanca':'MA','Europe/Paris':'FR','Europe/Madrid':'ES','Europe/London':'GB','America/New_York':'US','America/Sao_Paulo':'BR'}
+    setCountry(map[tz] || 'DEFAULT')
+  }
+}
+
+function setCountry(code) {
+  state.country = COUNTRIES[code] ? code : 'DEFAULT'
+  const p = COUNTRIES[state.country]
+  document.getElementById('countryFlag').textContent = p.flag
+  document.getElementById('countryName').textContent = p.name
+  state.sport = p.sports[0]
+  renderSportTabs()
+  renderTopLeagues()
+  renderFeed()
+}
+
+function toggleCountryPicker() {
+  state.showCountryPicker = !state.showCountryPicker
+  const dd = document.getElementById('countryDropdown')
+  if (state.showCountryPicker) {
+    dd.style.display = 'block'
+    dd.innerHTML = Object.entries(COUNTRIES).filter(([k])=>k!=='DEFAULT').sort(([,a],[,b])=>a.name.localeCompare(b.name)).map(([code,p])=>`
+      <div class="country-option ${code===state.country?'selected':''}" onclick="selectCountry('${code}')">
+        <span class="country-option-flag">${p.flag}</span>
+        <span class="country-option-name ${code===state.country?'selected':''}">${p.name}</span>
+        ${code===state.country?'<span class="country-check">✓</span>':''}
+      </div>`).join('')
+  } else {
+    dd.style.display = 'none'
+  }
+}
+
+function selectCountry(code) {
+  localStorage.setItem('sa_country', code)
+  setCountry(code)
+  document.getElementById('countryDropdown').style.display = 'none'
+  state.showCountryPicker = false
+}
+
+// ── SPORT TABS ────────────────────────────────────────────────────────────
+function renderSportTabs() {
+  const p = COUNTRIES[state.country]
+  const tabs = document.getElementById('sportTabs')
+  tabs.innerHTML = p.sports.map((id,idx)=>{
+    const m = SPORTS_META[id]
+    if (!m) return ''
+    return `<button class="sport-tab ${id===state.sport?'active':''}" onclick="switchSport('${id}')">
+      ${m.emoji} ${m.label}
+      ${idx===0?`<span class="tab-badge">#1</span>`:''}
+    </button>`
+  }).join('')
+}
+
+function switchSport(id) {
+  state.sport = id
+  renderSportTabs()
+  renderFeed()
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'))
+}
+
+// ── TOP LEAGUES ───────────────────────────────────────────────────────────
+function renderTopLeagues() {
+  const p = COUNTRIES[state.country]
+  const el = document.getElementById('topLeagues')
+  el.innerHTML = '<span class="league-chip-label">Top:</span>' + p.leagues.slice(0,4).map(l=>`<span class="league-chip">${l}</span>`).join('')
+}
+
+// ── FILTERS ───────────────────────────────────────────────────────────────
+function setFilter(f, btn) {
+  state.filter = f
+  document.querySelectorAll('.filter-btn').forEach(b=>{ b.classList.remove('active','active-live') })
+  btn.classList.add(f==='live'?'active-live':'active')
+  renderFeed()
+}
+
+function changeDay(d) {
+  state.day += d
+  document.getElementById('dateLabel').textContent = DAY_LABELS[String(state.day)] || (state.day>0?`+${state.day}d`:`${state.day}d`)
+  renderFeed()
+}
+
+// ── FEED ──────────────────────────────────────────────────────────────────
+function isLive(s) { return ['1H','2H','HT','ET'].includes(s) }
+function isFT(s)   { return s==='FT' }
+function isNS(s)   { return s==='NS' }
+
+function renderFeed() {
+  const data = state.sport==='basketball' ? NBA_DATA : FOOTBALL_DATA
+  const feed = document.getElementById('scoresFeed')
+  let totalMatches = 0
+  let totalLive = 0
+
+  const html = data.map(group => {
+    const visible = group.matches.filter(m => {
+      if (state.filter==='live') return isLive(m.status)
+      if (state.filter==='finished') return isFT(m.status)
+      if (state.filter==='upcoming') return isNS(m.status)
+      return true
+    })
+    if (!visible.length) return ''
+    totalMatches += visible.length
+    const liveCount = visible.filter(m=>isLive(m.status)).length
+    totalLive += liveCount
+
+    return `<div class="league-block">
+      <div class="league-header" onclick="toggleLeague(${group.league.id})">
+        <span class="league-flag">${group.league.flag}</span>
+        <span class="league-name">${group.league.name}</span>
+        <span class="league-country">${group.league.country}</span>
+        ${liveCount>0?`<span class="league-live-count">${liveCount} LIVE</span>`:''}
+        <span class="league-match-count">${visible.length}</span>
+        <span class="league-chevron open" id="chev-${group.league.id}">▾</span>
+      </div>
+      <div class="matches" id="matches-${group.league.id}">
+        ${visible.map(m=>renderMatch(m)).join('')}
+      </div>
+    </div>`
+  }).join('')
+
+  feed.innerHTML = html || '<div style="text-align:center;padding:48px;color:#555"><div style="font-size:32px;margin-bottom:8px">🔍</div><div style="font-size:14px">No matches found</div></div>'
+  document.getElementById('matchCount').textContent = `${totalMatches} match${totalMatches!==1?'es':''}`
+
+  // Update live button
+  const liveBtn = document.getElementById('liveBtnInner')
+  if (liveBtn) liveBtn.innerHTML = totalLive>0?`<span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:${state.filter==='live'?'#fff':'#FF3B30'};display:inline-block;animation:pulse 1.5s infinite"></span>Live (${totalLive})</span>`:'Live'
+}
+
+function renderMatch(m) {
+  const live = isLive(m.status)
+  const ft = isFT(m.status)
+  const ns = isNS(m.status)
+  const hWins = ft && m.hs > m.as
+  const aWins = ft && m.as > m.hs
+
+  const hInit = m.home.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()
+  const aInit = m.away.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()
+
+  let timeHtml = ''
+  if (live && m.status==='HT') timeHtml=`<span class="ht-badge">HT</span>`
+  else if (live) timeHtml=`<span class="live-badge"><span class="live-badge-dot"></span>${m.elapsed?m.elapsed+"'":'LIVE'}</span>`
+  else if (ft) timeHtml=`<span class="ft-text">FT</span>`
+  else timeHtml=`<span class="ns-time">${m.time||'--:--'}</span>`
+
+  let scoreHtml = ''
+  if (ns) { scoreHtml=`<span class="vs-text">vs</span>` }
+  else {
+    scoreHtml=`
+      <div class="score-box ${hWins?'win':aWins?'loss':''}">${m.hs??0}</div>
+      <span class="score-sep">:</span>
+      <div class="score-box ${aWins?'win':hWins?'loss':''}">${m.as??0}</div>`
+  }
+
+  const hasStats = m.stats && m.stats.length > 0
+  const expanded = state.expandedMatches.has(m.id)
+  const redHome = m.events?.some(e=>e.type==='red'&&e.team==='h')
+  const redAway = m.events?.some(e=>e.type==='red'&&e.team==='a')
+
+  let statsHtml = ''
+  if (expanded && hasStats) {
+    statsHtml = `<div class="match-stats">${m.stats.map(s=>{
+      const hv=parseFloat(s.h), av=parseFloat(s.a)
+      const hpct=(!isNaN(hv)&&!isNaN(av))?(hv/(hv+av)*100):50
+      return `<div class="stat-row">
+        <div class="stat-labels"><span>${s.h}</span><span class="stat-label-center">${s.l}</span><span>${s.a}</span></div>
+        ${!isNaN(hv)?`<div class="stat-bars">
+          <div class="stat-bar"><div class="stat-fill-home" style="width:${hpct}%"></div></div>
+          <div class="stat-bar"><div class="stat-fill-away" style="width:${100-hpct}%"></div></div>
+        </div>`:''}
+      </div>`
+    }).join('')}</div>`
+  }
+
+  return `<div class="match-row ${live?'live-row':''}" onclick="toggleMatch(${m.id})">
+    <div class="match-time">${timeHtml}</div>
+    <div class="team-home">
+      ${redHome?'<span class="red-card"></span>':''}
+      <span class="team-name ${hWins?'winner':aWins?'loser':''}">${m.home.name}</span>
+      <div class="team-crest" style="background:${m.home.color}22;color:${m.home.color}">${hInit}</div>
+    </div>
+    <div class="score-mid">${scoreHtml}</div>
+    <div class="team-away">
+      <div class="team-crest" style="background:${m.away.color}22;color:${m.away.color}">${aInit}</div>
+      <span class="team-name ${aWins?'winner':hWins?'loser':''}">${m.away.name}</span>
+      ${redAway?'<span class="red-card"></span>':''}
+    </div>
+    <div class="match-actions">
+      <button class="bell-btn" onclick="event.stopPropagation()">🔔</button>
+      ${hasStats?`<span style="color:#555;font-size:12px">${expanded?'▴':'▾'}</span>`:''}
+    </div>
+  </div>${statsHtml}`
+}
+
+function toggleMatch(id) {
+  if (state.expandedMatches.has(id)) state.expandedMatches.delete(id)
+  else state.expandedMatches.add(id)
+  renderFeed()
+}
+
+function toggleLeague(id) {
+  const m = document.getElementById(`matches-${id}`)
+  const c = document.getElementById(`chev-${id}`)
+  if (m.style.display==='none') { m.style.display=''; c.classList.add('open') }
+  else { m.style.display='none'; c.classList.remove('open') }
+}
+
+function refreshScores() {
+  // simulate live score update
+  FOOTBALL_DATA.forEach(g=>g.matches.forEach(m=>{
+    if(isLive(m.status)&&m.status!=='HT'&&typeof m.elapsed==='number'){
+      m.elapsed=Math.min(m.elapsed+1,90)
+      if(Math.random()>0.7){ if(Math.random()>0.5)m.hs++;else m.as++ }
+    }
+  }))
+  renderFeed()
+}
+
+// ── AUTO REFRESH ──────────────────────────────────────────────────────────
+setInterval(refreshScores, 30000)
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+detectCountry()
+
+// Close picker on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('.country-bar')) {
+    document.getElementById('countryDropdown').style.display='none'
+    state.showCountryPicker=false
+  }
+})
+</script>
+</body>
+</html>
