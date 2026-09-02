@@ -1,0 +1,10 @@
+{
+  "nav": { "live": "En Vivo", "all_sports": "Todos los Deportes", "leagues": "Ligas", "favorites": "Favoritos" },
+  "filter": { "all": "Todos", "live": "En Vivo", "finished": "Finalizados", "upcoming": "Próximos" },
+  "match": { "live": "EN VIVO", "ft": "FIN", "ht": "MEDIO TIEMPO", "vs": "VS" },
+  "detail": { "overview": "Resumen", "statistics": "Estadísticas", "lineups": "Alineaciones", "standings": "Clasificación", "h2h": "H2H", "ai_analysis": "Análisis IA" },
+  "country": { "select": "Elige tu país", "primary_sport": "Principal:" },
+  "search": { "placeholder": "Buscar equipos, partidos..." },
+  "date": { "today": "Hoy", "yesterday": "Ayer", "tomorrow": "Mañana" },
+  "common": { "loading": "Cargando...", "error": "Error", "no_data": "Sin datos" }
+}

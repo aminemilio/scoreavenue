@@ -1,0 +1,10 @@
+{
+  "nav": { "live": "مباشر", "all_sports": "كل الرياضات", "leagues": "الدوريات", "favorites": "المفضلات" },
+  "filter": { "all": "الكل", "live": "مباشر", "finished": "منتهية", "upcoming": "قادمة" },
+  "match": { "live": "مباشر", "ft": "نهاية", "ht": "استراحة", "vs": "ضد" },
+  "detail": { "overview": "نظرة عامة", "statistics": "إحصائيات", "lineups": "التشكيلة", "standings": "الترتيب", "h2h": "مواجهات سابقة", "ai_analysis": "تحليل الذكاء الاصطناعي" },
+  "country": { "select": "اختر بلدك", "primary_sport": "الرئيسي:" },
+  "search": { "placeholder": "ابحث عن فرق، مباريات..." },
+  "date": { "today": "اليوم", "yesterday": "أمس", "tomorrow": "غداً" },
+  "common": { "loading": "جارٍ التحميل...", "error": "خطأ", "no_data": "لا توجد بيانات" }
+}

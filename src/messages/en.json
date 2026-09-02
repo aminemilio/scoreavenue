@@ -1,0 +1,10 @@
+{
+  "nav": { "live": "Live", "all_sports": "All Sports", "leagues": "Leagues", "favorites": "Favorites" },
+  "filter": { "all": "All", "live": "Live", "finished": "Finished", "upcoming": "Upcoming" },
+  "match": { "live": "LIVE", "ft": "FT", "ht": "HALF TIME", "vs": "VS" },
+  "detail": { "overview": "Overview", "statistics": "Statistics", "lineups": "Lineups", "standings": "Standings", "h2h": "H2H", "ai_analysis": "AI Analysis" },
+  "country": { "select": "Select your country", "primary_sport": "Primary:" },
+  "search": { "placeholder": "Search teams, matches..." },
+  "date": { "today": "Today", "yesterday": "Yesterday", "tomorrow": "Tomorrow" },
+  "common": { "loading": "Loading...", "error": "Error", "no_data": "No data" }
+}

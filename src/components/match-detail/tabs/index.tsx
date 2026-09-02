@@ -1,0 +1,1 @@
+export { MatchDetailPanel } from './MatchDetailPanel';

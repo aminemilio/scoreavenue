@@ -1,0 +1,10 @@
+{
+  "name": "ScoreAvenue",
+  "short_name": "ScoreAve",
+  "description": "Live sports scores and stats",
+  "start_url": "/fr",
+  "display": "standalone",
+  "background_color": "#080808",
+  "theme_color": "#FF3B30",
+  "icons": [{ "src": "/favicon.ico", "sizes": "64x64", "type": "image/x-icon" }]
+}
