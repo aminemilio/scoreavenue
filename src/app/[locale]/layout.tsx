@@ -3,6 +3,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { AppLayout } from '@/components/layout';
+import { Suspense } from 'react';
 
 interface Props { children: React.ReactNode; params: Promise<{ locale: string }> }
 
@@ -14,7 +15,11 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <AppLayout>{children}</AppLayout>
+      <AppLayout>
+        <Suspense fallback={<div className="p-4"><div className="h-8 bg-[#1A1A1A] rounded animate-pulse mb-4" /><div className="h-48 bg-[#1A1A1A] rounded animate-pulse" /></div>}>
+          {children}
+        </Suspense>
+      </AppLayout>
     </NextIntlClientProvider>
   );
 }
