@@ -1,24 +1,57 @@
-import type { Metadata, Viewport } from 'next';
-import './globals.css';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+import { routing } from '@/i18n/routing';
+import { AppLayout } from '@/components/layout';
+import { Suspense } from 'react';
 
-export const metadata: Metadata = {
-  title: 'ScoreAvenue — Live Scores',
-  description: 'Live sports scores, stats, and AI analysis',
-};
+const VALID_LOCALES = ['fr', 'en', 'ar', 'es'];
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  themeColor: '#080808',
-};
+interface Props { children: React.ReactNode; params: Promise<{ locale: string }> }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function LocaleLayout({ children, params }: Props) {
+  let locale = 'fr';
+
+  try {
+    const resolved = await params;
+    locale = resolved?.locale || 'fr';
+  } catch {
+    locale = 'fr';
+  }
+
+  if (!VALID_LOCALES.includes(locale)) {
+    notFound();
+  }
+
+  let messages = {};
+  try {
+    messages = await getMessages();
+  } catch {
+    try {
+      const mod = await import(`../../messages/${locale}.json`);
+      messages = mod.default || {};
+    } catch {
+      const mod = await import('../../messages/fr.json');
+      messages = mod.default || {};
+    }
+  }
+
   return (
-    <html lang="fr" className="dark">
-      <body className="antialiased bg-[#080808] text-[#F0F0F0] dark:bg-[#080808] dark:text-[#F0F0F0] light:bg-white light:text-[#111111]">
-        {children}
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages} locale={locale}>
+      <AppLayout>
+        <Suspense fallback={
+          <div className="p-4">
+            <div className="h-8 bg-[#1A1A1A] rounded animate-pulse mb-4" />
+            <div className="h-48 bg-[#1A1A1A] rounded animate-pulse" />
+          </div>
+        }>
+          {children}
+        </Suspense>
+      </AppLayout>
+    </NextIntlClientProvider>
   );
+}
+
+export function generateStaticParams() {
+  return VALID_LOCALES.map((locale) => ({ locale }));
 }
