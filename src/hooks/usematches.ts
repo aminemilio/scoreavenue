@@ -132,5 +132,5 @@ export function useMatches() {
     return () => clearTimeout(timer);
   }, [date]);
 
-  return {# matches, isLoading, filter, setFilter, date, setDate, searchQuery, setSearchQuery };
+  return { matches, isLoading, filter, setFilter, date, setDate, searchQuery, setSearchQuery };
 }
