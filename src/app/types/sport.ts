@@ -41,6 +41,9 @@ export interface SportConfig {
 
 export type Locale = 'en' | 'fr' | 'ar' | 'es';
 
+export const SUPPORTED_LOCALES: Locale[] = ['en', 'fr', 'ar', 'es'];
+export const DEFAULT_LOCALE: Locale = 'en';
+export type Locale = 'fr' | 'en' | 'ar' | 'es';
 export const SUPPORTED_LOCALES: Locale[] = ['fr', 'en', 'ar', 'es'];
 export const DEFAULT_LOCALE: Locale = 'fr';
 export const RTL_LOCALES: Locale[] = ['ar'];

@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { SportSlug, Locale, MatchListItem } from '@/types';
+import type { SportSlug, MatchListItem } from '@/types';
+
+type Locale = 'fr' | 'en' | 'ar' | 'es';
 
 interface AppState {
   theme: 'dark' | 'light';
@@ -58,7 +60,7 @@ export const useAppStore = create<AppState>()(
       setAllMatches: (matches) => set({ allMatches: matches }),
     }),
     {
-      name: 'sa-app-store',
+      name: 'sa-app-store-v2',
       storage: createJSONStorage(() => {
         if (typeof window === 'undefined') return { getItem: () => null, setItem: () => {}, removeItem: () => {} };
         return localStorage;
@@ -70,6 +72,14 @@ export const useAppStore = create<AppState>()(
         activeSport: state.activeSport,
         locale: state.locale,
         activeDate: state.activeDate,
+      }),
+      merge: (persisted, current) => ({
+        ...current,
+        ...(persisted as Partial<AppState>),
+        theme: (persisted as any)?.theme || 'dark',
+        locale: (persisted as any)?.locale || 'fr',
+        activeSport: (persisted as any)?.activeSport || 'football',
+        countryCode: (persisted as any)?.countryCode || 'FR',
       }),
     }
   )
