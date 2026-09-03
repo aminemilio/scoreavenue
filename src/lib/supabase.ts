@@ -1,13 +1,15 @@
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from '@/types/database';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-export const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient<Database>(supabaseUrl, supabaseAnonKey)
-  : null;
+let _supabase: ReturnType<typeof import('@supabase/supabase-js').createClient> | null = null;
 
 export function isSupabaseConfigured(): boolean {
-  return supabase !== null;
+  return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+}
+
+export function get supabase() {
+  if (!_supabase && isSupabaseConfigured()) {
+    try {
+      const { createClient } = require('@supabase/supabase-js');
+      _supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+    } catch { return null; }
+  }
+  return _supabase;
 }
