@@ -1,6 +1,7 @@
 'use client';
 
 import { type ReactNode } from 'react';
+import { NewsTicker } from './newsticker';
 import { useAppStore } from '@/stores/useappstore';
 import { Header } from './header';
 import dynamic from 'next/dynamic';
@@ -23,6 +24,7 @@ export function AppLayout({ children, matches = [], showFilters = true }: Props)
   return (
     <div className="min-h-screen bg-[#080808]">
       <Header />
+      <NewsTicker />
       <Sidebar onOpenCountryModal={() => {}} />
       <div className={`transition-[margin] duration-200 ${sidebarOpen ? 'ml-[280px]' : 'ml-0'}`}>
         <div className="pt-[56px]">

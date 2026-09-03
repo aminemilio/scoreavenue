@@ -16,7 +16,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className="dark">
-      <body className="bg-[#080808] text-[#F0F0F0] antialiased">
+      <body className="antialiased bg-[#080808] text-[#F0F0F0] dark:bg-[#080808] dark:text-[#F0F0F0] light:bg-white light:text-[#111111]">
         {children}
       </body>
     </html>

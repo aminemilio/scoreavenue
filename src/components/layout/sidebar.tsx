@@ -80,6 +80,7 @@ export function Sidebar({ onOpenCountryModal }: Props) {
         </div>
 
         <div className="flex-1 overflow-y-auto py-2">
+          {/* Live */}
           <div className="px-5 pt-4 pb-2 text-[11px] font-semibold uppercase tracking-wider text-[#555555]">
             {t('nav.live')}
           </div>
@@ -91,6 +92,21 @@ export function Sidebar({ onOpenCountryModal }: Props) {
             onClick={() => {}}
           />
 
+          {/* News */}
+          <NavItem
+            icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2"><path d="M4 22V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v18l-6-3-6 3Z" /></svg>}
+            label="📰 News"
+            onClick={() => { if (!isDesktop) setSidebarOpen(false); }}
+          />
+
+          {/* Favorites */}
+          <NavItem
+            icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>}
+            label={t('nav.favorites')}
+            onClick={() => { if (!isDesktop) setSidebarOpen(false); }}
+          />
+
+          {/* Sports */}
           <div className="px-5 pt-5 pb-2 text-[11px] font-semibold uppercase tracking-wider text-[#555555]">Sports</div>
           {sportPriority.map(slug => (
             <NavItem
@@ -106,6 +122,7 @@ export function Sidebar({ onOpenCountryModal }: Props) {
             />
           ))}
 
+          {/* Leagues */}
           <div className="px-5 pt-5 pb-2 text-[11px] font-semibold uppercase tracking-wider text-[#555555]">
             {t('nav.leagues')}
           </div>
@@ -117,15 +134,9 @@ export function Sidebar({ onOpenCountryModal }: Props) {
               onClick={() => { if (!isDesktop) setSidebarOpen(false); }}
             />
           ))}
-
-          <div className="px-5 pt-5 pb-2 text-[11px] font-semibold uppercase tracking-wider text-[#555555]">Navigation</div>
-          <NavItem
-            icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>}
-            label={t('nav.favorites')}
-            onClick={() => { if (!isDesktop) setSidebarOpen(false); }}
-          />
         </div>
 
+        {/* Country selector */}
         <button
           onClick={onOpenCountryModal}
           className="flex items-center gap-3 px-5 py-4 border-t border-[#1E1E1E] hover:bg-[#1A1A1A] transition-colors flex-shrink-0 w-full text-start"

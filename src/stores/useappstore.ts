@@ -3,6 +3,9 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { SportSlug, Locale, MatchListItem } from '@/types';
 
 interface AppState {
+  theme: 'dark' | 'light';
+  setTheme: (theme: 'dark' | 'light') => void;
+  toggleTheme: () => void;
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
@@ -29,6 +32,9 @@ interface AppState {
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
+      theme: 'dark' as const,
+      setTheme: (theme: 'dark' | 'light') => set({ theme }),
+      toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
       sidebarOpen: true,
       setSidebarOpen: (open) => set({ sidebarOpen: open }),
       toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
@@ -58,6 +64,7 @@ export const useAppStore = create<AppState>()(
         return localStorage;
       }),
       partialize: (state) => ({
+        theme: state.theme,
         sidebarOpen: state.sidebarOpen,
         countryCode: state.countryCode,
         activeSport: state.activeSport,
