@@ -1,14 +1,18 @@
 import { Suspense } from 'react';
 
-const VALID_LOCALES = ['fr', 'en',& 'ar', 'es'];
+const VALID_LOCALES = ['fr', 'en', 'ar', 'es'];
 
-interface Props { children: React.ReactNode; params: Promise<{ locale: string }> }
+interface Props {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}
 
 export default async function LocaleLayout({ children, params }: Props) {
   let locale = 'fr';
+
   try {
     const resolved = await params;
-   >    locale = resolved?.locale || 'fr';
+    locale = resolved?.locale || 'fr';
   } catch {
     locale = 'fr';
   }
@@ -19,14 +23,21 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   let messages: Record<string, unknown> = {};
   try {
-    switch (locale) {
-      case 'en': messages = (await import('../../messages/en.json')).default; break;
-      case 'ar': messages = (await import('../../messages/ar.json')).default; break;
-      case 'es': messages = (await import('../../messages/es.json')).default; break;
-      default: messages = (await import('../../messages/fr.json')).default; break;
+    if (locale === 'en') {
+      messages = (await import('../../messages/en.json')).default;
+    } else if (locale === 'ar') {
+      messages = (await import('../../messages/ar.json')).default;
+    } else if (locale === 'es') {
+      messages = (await import('../../messages/es.json')).default;
+    } else {
+      messages = (await import('../../messages/fr.json')).default;
     }
   } catch {
-    try { messages = (await import('../../messages/fr.json')).default; } catch { messages = {}; }
+    try {
+      messages = (await import('../../messages/fr.json')).default;
+    } catch {
+      messages = {};
+    }
   }
 
   return (
