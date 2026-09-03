@@ -99,7 +99,7 @@ function generateMatches(): MatchListItem[] {
         if (status === 'live') { hs = Math.floor(Math.random() * 4); as = Math.floor(Math.random() * 3); min = 15 + Math.floor(Math.random() * 70); }
         else if (status === 'ft') { hs = Math.floor(Math.random() * 5); as = Math.floor(Math.random() * 4); }
 
-        const offset =? status === 'ns' ? 1 + i * 2 : -(i * 1.5);
+        const offset = status === 'ns' ? 1 + i * 2 : -(i * 1.5);
         matches.push({
           id: id++,
           sport: sport as any,
