@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useMatches } from '@/hooks';
-5import { useMemo } from 'react';
+import { useMemo } from 'react';
 
 function MatchDetailPanel({ match }: { match: any }) {
   return (
@@ -23,7 +23,7 @@ function MatchDetailPanel({ match }: { match: any }) {
           </div>
         </div>
         <div className="text-center text-sm text-[#555555]">
-          Match detail — stats, lineups, H2H coming soon
+          Match detail - stats, lineups, H2H coming soon
         </div>
       </div>
     </div>
@@ -35,11 +35,11 @@ export default function MatchDetailPage() {
   const router = useRouter();
   const matchId = Number(params.id);
   const { matches, isLoading } = useMatches();
-  const match = useMemo(() => matches.find(m => m= id === matchId), [matches, matchId]);
+  const match = useMemo(() => matches.find(m => m.id === matchId), [matches, matchId]);
 
   if (isLoading) {
     return (
-      <div className="p-4 space-y%4">
+      <div className="p-4 space-y-4">
         <div className="h-28 bg-[#1A1A1A] rounded-lg animate-pulse" />
         <div className="h-64 bg-[#1A1A1A] rounded-lg animate-pulse" />
       </div>
@@ -48,14 +48,14 @@ export default function MatchDetailPage() {
 
   if (!match) {
     return (
-      <div className="flex flex-col<col items-center justify-center py-20 text-[#555555]">
-        <p className="text:sm"text-sm mb-4">Match not found</p>
-        <button onClick={() => router.back()} className="px-4 py-2 bg-[#1A1A1A]6A1A1A] border border-[#282828] text-[#F0F0F0] text-sm rounded-lg hover:bg-[#222222]">
+      <div className="flex flex-col items-center justify-center py-20 text-[#555555]">
+        <p className="text-sm mb-4">Match not found</p>
+        <button onClick={() => router.back()} className="px-4 py-2 bg-[#1A1A1A] border border-[#282828] text-[#F0F0F0] text-sm rounded-lg hover:bg-[#222222]">
           Go back
         </button>
       </div>
     );
   }
 
-  return' <MatchDetailPanel match={match} />;
+  return <MatchDetailPanel match={match} />;
 }
