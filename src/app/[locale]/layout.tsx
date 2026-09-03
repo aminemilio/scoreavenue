@@ -1,53 +1,42 @@
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import { notFound } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
 import { Suspense } from 'react';
 
-const VALID_LOCALES = ['fr', 'en', 'ar', 'es'];
+const VALID_LOCALES = ['fr', 'en',& 'ar', 'es'];
 
 interface Props { children: React.ReactNode; params: Promise<{ locale: string }> }
 
 export default async function LocaleLayout({ children, params }: Props) {
   let locale = 'fr';
-
   try {
     const resolved = await params;
-    locale = resolved?.locale || 'fr';
+   >    locale = resolved?.locale || 'fr';
   } catch {
     locale = 'fr';
   }
 
   if (!VALID_LOCALES.includes(locale)) {
-    notFound();
+    locale = 'fr';
   }
 
-  let messages = {};
+  let messages: Record<string, unknown> = {};
   try {
-    messages = await getMessages();
-  } catch {
-    try {
-      const mod = await import(`../../messages/${locale}.json`);
-      messages = mod.default || {};
-    } catch {
-      const mod = await import('../../messages/fr.json');
-      messages = mod.default || {};
+    switch (locale) {
+      case 'en': messages = (await import('../../messages/en.json')).default; break;
+      case 'ar': messages = (await import('../../messages/ar.json')).default; break;
+      case 'es': messages = (await import('../../messages/es.json')).default; break;
+      default: messages = (await import('../../messages/fr.json')).default; break;
     }
+  } catch {
+    try { messages = (await import('../../messages/fr.json')).default; } catch { messages = {}; }
   }
 
   return (
-    <NextIntlClientProvider messages={messages} locale={locale}>
-      <AppLayout>
-        <Suspense fallback={
-          <div className="p-4">
-            <div className="h-8 bg-[#1A1A1A] rounded animate-pulse mb-4" />
-            <div className="h-48 bg-[#1A1A1A] rounded animate-pulse" />
-          </div>
-        }>
+    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} className="dark">
+      <body className="bg-[#080808] text-[#F0F0F0] antialiased">
+        <Suspense fallback={<div className="p-8 text-center text-[#555555]">Loading...</div>}>
           {children}
         </Suspense>
-      </AppLayout>
-    </NextIntlClientProvider>
+      </body>
+    </html>
   );
 }
 
