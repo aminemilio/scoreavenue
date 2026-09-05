@@ -1,7 +1,7 @@
-import fr from '../../messages/fr.json';
-import en from '../../messages/en.json';
-import ar from '../../messages/ar.json';
-import es from '../../messages/es.json';
+import fr from '../messages/fr.json';
+import en from '../messages/en.json';
+import ar from '../messages/ar.json';
+import es from '../messages/es.json';
 
 const allMessages: Record<string, any> = { fr, en, ar, es };
 
@@ -15,7 +15,12 @@ function getNestedValue(obj: any, key: string): string {
 }
 
 export function useTranslations(namespace?: string) {
-  const locale = (typeof window !== 'undefined' && localStorage.getItem('sa_locale')) || 'fr';
+  let locale = 'fr';
+  try {
+    if (typeof window !== 'undefined') {
+      locale = localStorage.getItem('sa_locale') || 'fr';
+    }
+  } catch {}
   const messages = allMessages[locale] || allMessages.fr;
 
   return function t(key: string): string {
@@ -25,8 +30,10 @@ export function useTranslations(namespace?: string) {
 }
 
 export function useLocale() {
-  if (typeof window !== 'undefined') {
-    return (localStorage.getItem('sa_locale') as any) || 'fr';
-  }
+  try {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('sa_locale') as any) || 'fr';
+    }
+  } catch {}
   return 'fr';
 }
