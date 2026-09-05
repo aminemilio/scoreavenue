@@ -23,13 +23,13 @@ export function MatchRow({ match, onClick }: Props) {
       </div>
 
       <div className="flex-1 min-w-0 flex items-center gap-2">
-        <TeamLogo src={match.homeTeam.logo} name={match.homeTeam.shortName} color={match.homeTeam.primaryColor} size="sm" />
+        <TeamLogo src={match.homeTeam.logo} name={match.homeTeam.name} shortName={match.homeTeam.shortName} color={match.homeTeam.primaryColor} size="sm" />
         <span className="text-sm text-[#F0F0F0] truncate">{match.homeTeam.shortName || match.homeTeam.name}</span>
       </div>
 
       <div className="flex-1 min-w-0 flex items-center gap-2 justify-end">
         <span className="text-sm text-[#F0F0F0] truncate text-right">{match.awayTeam.shortName || match.awayTeam.name}</span>
-        <TeamLogo src={match.awayTeam.logo} name={match.awayTeam.shortName} color={match.awayTeam.primaryColor} size="sm" />
+        <TeamLogo src={match.awayTeam.logo} name={match.awayTeam.name} shortName={match.awayTeam.shortName} color={match.awayTeam.primaryColor} size="sm" />
       </div>
 
       <div className="w-16 flex-shrink-0 flex flex-col items-end gap-0.5">

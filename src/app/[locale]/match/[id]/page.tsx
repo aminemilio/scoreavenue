@@ -3,32 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useMatches } from '@/hooks';
 import { useMemo } from 'react';
-
-function MatchDetailPanel({ match }: { match: any }) {
-  return (
-    <div className="p-4">
-      <div className="bg-[#141414] rounded-xl p-6 border border-[#1E1E1E]">
-        <div className="text-center mb-4">
-          <span className="text-xs font-semibold text-[#999999] uppercase">{match.leagueName}</span>
-        </div>
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex-1 text-center">
-            <div className="text-lg font-bold text-[#F0F0F0]">{match.homeTeam?.name || 'Home'}</div>
-          </div>
-          <div className="text-2xl font-bold text-[#F0F0F0] tabular-nums px-4">
-            {match.homeScore} - {match.awayScore}
-          </div>
-          <div className="flex-1 text-center">
-            <div className="text-lg font-bold text-[#F0F0F0]">{match.awayTeam?.name || 'Away'}</div>
-          </div>
-        </div>
-        <div className="text-center text-sm text-[#555555]">
-          Match detail - stats, lineups, H2H coming soon
-        </div>
-      </div>
-    </div>
-  );
-}
+import { MatchDetailPanel } from '@/components/match-detail/matchdetailpanel';
 
 export default function MatchDetailPage() {
   const params = useParams();
