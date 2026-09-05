@@ -9,36 +9,11 @@ interface Props {
 
 export default async function LocaleLayout({ children, params }: Props) {
   let locale = 'fr';
-
   try {
     const resolved = await params;
     locale = resolved?.locale || 'fr';
-  } catch {
-    locale = 'fr';
-  }
-
-  if (!VALID_LOCALES.includes(locale)) {
-    locale = 'fr';
-  }
-
-  let messages: Record<string, unknown> = {};
-  try {
-    if (locale === 'en') {
-      messages = (await import('../../messages/en.json')).default;
-    } else if (locale === 'ar') {
-      messages = (await import('../../messages/ar.json')).default;
-    } else if (locale === 'es') {
-      messages = (await import('../../messages/es.json')).default;
-    } else {
-      messages = (await import('../../messages/fr.json')).default;
-    }
-  } catch {
-    try {
-      messages = (await import('../../messages/fr.json')).default;
-    } catch {
-      messages = {};
-    }
-  }
+  } catch {}
+  if (!VALID_LOCALES.includes(locale)) locale = 'fr';
 
   return (
     <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} className="dark">

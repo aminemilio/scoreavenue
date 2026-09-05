@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/stores/useappstore';
 import { useMatches, type MatchFilter } from '@/hooks';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/hooks/usetranslation';
 
 export function FilterBar() {
   const t = useTranslations('filter');

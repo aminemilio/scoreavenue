@@ -1,7 +1,7 @@
 'use client';
 
 import { getLatestNews } from '@/lib/news';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/hooks/usetranslation';
 import Link from 'next/link';
 
 export default function NewsPage() {

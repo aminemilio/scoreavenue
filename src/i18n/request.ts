@@ -1,6 +1,6 @@
 import { getRequestConfig } from 'next-intl/server';
 import { routing } from './routing';
-import { hasLocale } from 'next-intl';
+import { hasLocale } from '@/hooks/usetranslation';
 
 const messages = {
   fr: (await import('../messages/fr.json')).default,

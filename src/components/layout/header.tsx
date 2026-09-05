@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppStore } from '@/stores/useappstore';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/hooks/usetranslation';
 
 export function Header() {
   const t = useTranslations();

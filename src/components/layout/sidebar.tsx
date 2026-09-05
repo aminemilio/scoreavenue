@@ -4,7 +4,7 @@ import { useAppStore } from '@/stores/useappstore';
 import { useMediaQuery, BREAKPOINTS } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { getCountryConfig } from '@/lib/country-sports';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/hooks/usetranslation';
 import type { SportSlug } from '@/types';
 
 interface Props { onOpenCountryModal: () => void; }

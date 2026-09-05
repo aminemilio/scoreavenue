@@ -2,7 +2,7 @@
 
 import { useAppStore } from '@/stores/useappstore';
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/hooks/usetranslation';
 
 export function DateSelector() {
   const t = useTranslations('date');

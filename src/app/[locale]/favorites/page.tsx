@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/hooks/usetranslation';
 import { useMatches, useFavorites } from '@/hooks';
 import { MatchRow } from '@/components/match';
 import { useMemo } from 'react';
