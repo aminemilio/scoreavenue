@@ -34,7 +34,7 @@ interface AppState {
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
-      theme: 'dark' as const,
+      theme: 'light' as const,
       setTheme: (theme: 'dark' | 'light') => set({ theme }),
       toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
       sidebarOpen: true,
@@ -76,7 +76,7 @@ export const useAppStore = create<AppState>()(
       merge: (persisted, current) => ({
         ...current,
         ...(persisted as Partial<AppState>),
-        theme: (persisted as any)?.theme || 'dark',
+        theme: (persisted as any)?.theme || 'light',
         locale: (persisted as any)?.locale || 'fr',
         activeSport: (persisted as any)?.activeSport || 'football',
         countryCode: (persisted as any)?.countryCode || 'FR',

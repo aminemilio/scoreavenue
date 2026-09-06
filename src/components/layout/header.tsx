@@ -1,23 +1,25 @@
 'use client';
 
 import { useAppStore } from '@/stores/useappstore';
-import { useTranslations } from '@/hooks/usetranslation';
+import { Logo } from './logo';
 
 export function Header() {
-  const t = useTranslations();
-  const setSidebarOpen = useAppStore(s => s.setSidebarOpen);
-  const sidebarOpen = useAppStore(s => s.sidebarOpen);
-  const liveCount = useAppStore(s => s.liveCount);
-  const theme = useAppStore(s => s.theme);
-  const toggleTheme = useAppStore(s => s.toggleTheme);
+  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
+  const sidebarOpen = useAppStore((s) => s.sidebarOpen);
+  const liveCount = useAppStore((s) => s.liveCount);
+  const theme = useAppStore((s) => s.theme);
+  const toggleTheme = useAppStore((s) => s.toggleTheme);
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-14 border-b z-[250] flex items-center justify-between px-4" style={{ backgroundColor: theme === 'dark' ? '#0C0C0C' : '#FFFFFF', borderColor: theme === 'dark' ? '#1E1E1E' : '#E5E5E5' }}>
+    <header
+      className="fixed top-0 left-0 right-0 h-14 z-[250] flex items-center justify-between px-4 border-b transition-colors"
+      style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)' }}
+    >
       <div className="flex items-center gap-3">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 rounded-lg transition-colors"
-          style={{ color: theme === 'dark' ? '#999999' : '#666666' }}
+          className="p-2 rounded-lg transition-colors hover:opacity-70"
+          style={{ color: 'var(--text-2)' }}
           aria-label="Toggle menu"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -26,22 +28,20 @@ export function Header() {
             <line x1="3" y1="18" x2="21" y2="18" />
           </svg>
         </button>
-        <div className="font-extrabold text-lg tracking-tight" style={{ color: theme === 'dark' ? '#F0F0F0' : '#111111' }}>
-          Score<span style={{ color: '#FF3B30' }}>Avenue</span>
-        </div>
+        <Logo className="text-lg" />
       </div>
 
       <div className="flex items-center gap-3">
         {liveCount > 0 && (
-          <span className="flex items-center gap-1.5 text-xs font-bold" style={{ color: '#FF3B30' }}>
-            <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#FF3B30' }} />
+          <span className="flex items-center gap-1.5 text-xs font-bold text-[#FF3B30]">
+            <span className="w-2 h-2 rounded-full bg-[#FF3B30] animate-pulse" />
             {liveCount} LIVE
           </span>
         )}
         <button
           onClick={toggleTheme}
           className="p-2 rounded-lg transition-colors"
-          style={{ color: theme === 'dark' ? '#999999' : '#666666', backgroundColor: theme === 'dark' ? '#1A1A1A' : '#F5F5F5' }}
+          style={{ color: 'var(--text-2)', backgroundColor: 'var(--surface)' }}
           aria-label="Toggle theme"
         >
           {theme === 'dark' ? (

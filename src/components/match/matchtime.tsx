@@ -1,9 +1,8 @@
 import { cn } from '@/lib/utils';
-import type { MatchStatus } from '@/types';
 
 function isLive(status: string) { return status === 'live' || status === 'ht' || status === 'et' || status === 'pen'; }
 
-interface Props { status: MatchStatus; minute?: number; startTime: string; className?: string; }
+interface Props { status: string; minute?: number; startTime: string; className?: string; }
 
 export function MatchTime({ status, minute, startTime, className }: Props) {
   if (isLive(status)) return null;
@@ -25,7 +24,7 @@ export function MatchTime({ status, minute, startTime, className }: Props) {
   else prefix = date.toLocaleDateString([], { day: 'numeric', month: 'short' }) + ' ';
 
   return (
-    <span className={cn('text-[#555555] text-xs', className)}>
+    <span className={cn('text-xs', className)} style={{ color: 'var(--text-3)' }}>
       {prefix}{timeStr}
     </span>
   );
