@@ -3,7 +3,6 @@
 import { useAppStore } from '@/stores/useappstore';
 import { useCountrySports } from '@/hooks';
 import { cn } from '@/lib/utils';
-import type { MatchListItem } from '@/types';
 
 const SPORT_LABELS: Record<string, string> = {
   football: 'Football', basketball: 'Basketball', tennis: 'Tennis', cricket: 'Cricket',
@@ -14,35 +13,46 @@ const SPORT_LABELS: Record<string, string> = {
   badminton: 'Badminton', swimming: 'Swimming', esports: 'Esports', padel: 'Padel',
 };
 
+const SPORT_COLORS: Record<string, string> = {
+  football: '#22C55E', basketball: '#3B82F6', tennis: '#F59E0B', rugby: '#3B82F6',
+  handball: '#F59E0B', volleyball: '#3B82F6', formula1: '#EF4444', motogp: '#EF4444',
+  boxing: '#EF4444', mma: '#EF4444', ice_hockey: '#3B82F6', cricket: '#22C55E',
+};
+
 function isLive(status: string) { return status === 'live' || status === 'ht' || status === 'et' || status === 'pen'; }
 
-interface Props { matches: MatchListItem[]; }
+interface MatchLike { sport: string; status: string; }
+
+interface Props { matches: MatchLike[]; }
 
 export function SportTabs({ matches }: Props) {
-  const activeSport = useAppStore(s => s.activeSport);
-  const setActiveSport = useAppStore(s => s.setActiveSport);
+  const activeSport = useAppStore((s) => s.activeSport);
+  const setActiveSport = useAppStore((s) => s.setActiveSport);
   const { sportPriority } = useCountrySports();
 
   return (
-    <div className="bg-[#141414] border-b border-[#1E1E1E] sticky top-[56px] z-[150]">
+    <div className="border-b sticky top-[56px] z-[150]" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
       <div className="px-4 py-2 overflow-x-auto flex gap-1">
-        {sportPriority.map(sportSlug => {
-          const count = matches.filter(m => m.sport === sportSlug).length;
-          const liveCount = matches.filter(m => m.sport === sportSlug && isLive(m.status)).length;
+        {sportPriority.map((sportSlug) => {
+          const count = matches.filter((m) => m.sport === sportSlug).length;
+          const live = matches.filter((m) => m.sport === sportSlug && isLive(m.status)).length;
           const isActive = activeSport === sportSlug;
           return (
             <button
               key={sportSlug}
               onClick={() => setActiveSport(sportSlug)}
-              className={cn(
-                'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all flex-shrink-0',
-                isActive ? 'bg-[#FF3B30] text-white' : 'text-[#999999] hover:text-[#F0F0F0] hover:bg-[#1A1A1A]'
-              )}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all flex-shrink-0"
+              style={isActive
+                ? { backgroundColor: 'var(--brand-accent)', color: '#fff' }
+                : { color: 'var(--text-2)' }}
             >
-              <span className="w-3 h-3 rounded-full flex-shrink-0 bg-[#333333]" />
+              <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: isActive ? '#fff' : (SPORT_COLORS[sportSlug] || 'var(--text-3)') }} />
               {SPORT_LABELS[sportSlug] || sportSlug}
-              <span className={cn('text-[11px] font-bold px-1.5 rounded-full', isActive ? 'bg-white/20 text-white' : 'bg-[#222222] text-[#555555]')}>
-                {liveCount > 0 ? `${liveCount}/` : ''}{count}
+              <span
+                className="text-[11px] font-bold px-1.5 rounded-full"
+                style={isActive ? { backgroundColor: 'rgba(255,255,255,0.2)', color: '#fff' } : { backgroundColor: 'var(--surface-2)', color: live > 0 ? 'var(--live)' : 'var(--text-3)' }}
+              >
+                {live > 0 ? `${live}/` : ''}{count}
               </span>
             </button>
           );

@@ -43,13 +43,13 @@ export function MatchList({ matches, showSearch = false }: Props) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search teams, matches..."
-            className="w-full bg-[#111111] border border-[#1E1E1E] rounded-lg px-3 py-2 text-sm text-[#F0F0F0] placeholder:text-[#444444] outline-none focus:border-[#333333]"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text-3)] outline-none focus:border-[var(--border)]"
           />
         </div>
       )}
       <div className="overflow-y-auto">
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[#555555]">
+          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-3)]">
             <p className="text-sm">No matches found</p>
           </div>
         ) : (

@@ -16,13 +16,11 @@ export default async function LocaleLayout({ children, params }: Props) {
   if (!VALID_LOCALES.includes(locale)) locale = 'fr';
 
   return (
-    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} className="dark">
-      <body className="bg-[#080808] text-[#F0F0F0] antialiased">
-        <Suspense fallback={<div className="p-8 text-center text-[#555555]">Loading...</div>}>
-          {children}
-        </Suspense>
-      </body>
-    </html>
+    <div dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+      <Suspense fallback={<div className="p-8 text-center" style={{ color: 'var(--text-3)' }}>Loading...</div>}>
+        {children}
+      </Suspense>
+    </div>
   );
 }
 

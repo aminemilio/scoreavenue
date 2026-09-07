@@ -18,7 +18,7 @@ export function FilterBar() {
   ];
 
   return (
-    <div className="flex items-center gap-2 px-4 py-3 bg-[#0F0F0F] border-b border-[#1E1E1E] overflow-x-auto">
+    <div className="flex items-center gap-2 px-4 py-3 bg-[var(--surface)] border-b border-[var(--border)] overflow-x-auto">
       {filters.map(f => (
         <button
           key={f.key}
@@ -26,14 +26,16 @@ export function FilterBar() {
           className={cn(
             'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all border',
             filter === f.key
-              ? 'bg-[#FF3B30] text-white border-[#FF3B30]'
-              : 'bg-[#1A1A1A] text-[#555555] border-[#1E1E1E] hover:text-[#F0F0F0] hover:border-[#282828]'
+              ? f.key === 'live'
+                ? 'bg-[var(--live)] text-white border-[var(--live)]'
+                : 'bg-[var(--brand-accent)] text-white border-[var(--brand-accent)]'
+              : 'bg-[var(--surface-2)] text-[var(--text-3)] border-[var(--border)] hover:text-[var(--text)] hover:border-[var(--border)]'
           )}
         >
-          {f.showDot && <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B30] animate-pulse" />}
+          {f.showDot && <span className="w-1.5 h-1.5 rounded-full bg-[var(--live)] animate-pulse" />}
           {f.label}
           {f.key === 'live' && liveCount > 0 && (
-            <span className={cn('text-[10px] font-bold px-1 rounded-full', filter === 'live' ? 'bg-white/20' : 'bg-[#222222]')}>{liveCount}</span>
+            <span className={cn('text-[10px] font-bold px-1 rounded-full', filter === 'live' ? 'bg-white/20' : 'bg-[var(--surface-2)]')}>{liveCount}</span>
           )}
         </button>
       ))}

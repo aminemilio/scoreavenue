@@ -7,22 +7,22 @@ import { useMemo } from 'react';
 function MatchDetailPanel({ match }: { match: any }) {
   return (
     <div className="p-4">
-      <div className="bg-[#141414] rounded-xl p-6 border border-[#1E1E1E]">
+      <div className="bg-[var(--surface)] rounded-xl p-6 border border-[var(--border)]">
         <div className="text-center mb-4">
-          <span className="text-xs font-semibold text-[#999999] uppercase">{match.leagueName}</span>
+          <span className="text-xs font-semibold text-[var(--text-2)] uppercase">{match.leagueName}</span>
         </div>
         <div className="flex items-center justify-between mb-6">
           <div className="flex-1 text-center">
-            <div className="text-lg font-bold text-[#F0F0F0]">{match.homeTeam?.name || 'Home'}</div>
+            <div className="text-lg font-bold text-[var(--text)]">{match.homeTeam?.name || 'Home'}</div>
           </div>
-          <div className="text-2xl font-bold text-[#F0F0F0] tabular-nums px-4">
+          <div className="text-2xl font-bold text-[var(--text)] tabular-nums px-4">
             {match.homeScore} - {match.awayScore}
           </div>
           <div className="flex-1 text-center">
-            <div className="text-lg font-bold text-[#F0F0F0]">{match.awayTeam?.name || 'Away'}</div>
+            <div className="text-lg font-bold text-[var(--text)]">{match.awayTeam?.name || 'Away'}</div>
           </div>
         </div>
-        <div className="text-center text-sm text-[#555555]">
+        <div className="text-center text-sm text-[var(--text-3)]">
           Match detail - stats, lineups, H2H coming soon
         </div>
       </div>
@@ -40,17 +40,17 @@ export default function MatchDetailPage() {
   if (isLoading) {
     return (
       <div className="p-4 space-y-4">
-        <div className="h-28 bg-[#1A1A1A] rounded-lg animate-pulse" />
-        <div className="h-64 bg-[#1A1A1A] rounded-lg animate-pulse" />
+        <div className="h-28 bg-[var(--surface-2)] rounded-lg animate-pulse" />
+        <div className="h-64 bg-[var(--surface-2)] rounded-lg animate-pulse" />
       </div>
     );
   }
 
   if (!match) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-[#555555]">
+      <div className="flex flex-col items-center justify-center py-20 text-[var(--text-3)]">
         <p className="text-sm mb-4">Match not found</p>
-        <button onClick={() => router.back()} className="px-4 py-2 bg-[#1A1A1A] border border-[#282828] text-[#F0F0F0] text-sm rounded-lg hover:bg-[#222222]">
+        <button onClick={() => router.back()} className="px-4 py-2 bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text)] text-sm rounded-lg hover:bg-[var(--surface-2)]">
           Go back
         </button>
       </div>

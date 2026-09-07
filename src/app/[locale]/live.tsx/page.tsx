@@ -25,18 +25,18 @@ export default function LivePage() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-4 py-3 flex items-center gap-3 border-b border-[#1A1A1A]">
+      <div className="px-4 py-3 flex items-center gap-3 border-b border-[var(--surface-2)]">
         <span className="w-2 h-2 rounded-full bg-[#FF3B30] animate-pulse" />
-        <h1 className="text-base font-bold text-[#F0F0F0]">{t('nav.live')}</h1>
-        <span className="text-xs text-[#555555]">({liveMatches.length})</span>
+        <h1 className="text-base font-bold text-[var(--text)]">{t('nav.live')}</h1>
+        <span className="text-xs text-[var(--text-3)]">({liveMatches.length})</span>
       </div>
       <div className="flex-1 overflow-y-auto">
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-12 bg-[#1A1A1A] animate-pulse" />
+            <div key={i} className="h-12 bg-[var(--surface-2)] animate-pulse" />
           ))
         ) : liveMatches.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[#555555]">
+          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-3)]">
             <p className="text-sm">{t('common.no_data')}</p>
           </div>
         ) : (

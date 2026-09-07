@@ -19,14 +19,14 @@ export function DateSelector() {
   });
 
   return (
-    <div className="flex items-center gap-2 px-4 py-3 bg-[#141414] border-b border-[#1E1E1E] overflow-x-auto">
+    <div className="flex items-center gap-2 px-4 py-3 bg-[var(--surface)] border-b border-[var(--border)] overflow-x-auto">
       {dates.map(d => (
         <button
           key={d.key}
           onClick={() => setActiveDate(d.key)}
           className={cn(
             'flex flex-col items-center min-w-[60px] px-3 py-2 rounded-lg text-center transition-all border border-transparent',
-            activeDate === d.key ? 'bg-[#FF3B30] text-white' : 'text-[#999999] hover:bg-[#1A1A1A]'
+            activeDate === d.key ? 'bg-[var(--brand-accent)] text-white' : 'text-[var(--text-2)] hover:bg-[var(--surface-2)]'
           )}
         >
           <span className="text-sm font-bold leading-tight">{d.day}</span>
