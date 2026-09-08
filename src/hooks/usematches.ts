@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useAppStore } from '@/stores/useappstore';
 import { getFeaturedLeagues } from '@/lib/country-sports';
 import type { MatchListItem, MatchStatus } from '@/types';
 
@@ -219,20 +220,54 @@ function generateMatches(): MatchListItem[] {
   return matches;
 }
 
+function isSameRelativeDay(iso: string, dateKey: string): boolean {
+  const d = new Date(iso);
+  const now = new Date();
+  const startOfDay = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const dayDiff = Math.round((startOfDay(d) - startOfDay(now)) / 86400000);
+  if (dateKey === 'today') return dayDiff === 0;
+  if (dateKey === 'yesterday') return dayDiff === -1;
+  if (dateKey === 'tomorrow') return dayDiff === 1;
+  return d.toISOString().split('T')[0] === dateKey;
+}
+
 export function useMatches() {
-  const [matches, setMatches] = useState<MatchListItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState<MatchFilter>('all');
-  const [date, setDate] = useState('today');
+  const allMatches = useAppStore((s) => s.allMatches);
+  const setAllMatches = useAppStore((s) => s.setAllMatches);
+  const activeFilter = useAppStore((s) => s.activeFilter);
+  const setActiveFilter = useAppStore((s) => s.setActiveFilter);
+  const activeDate = useAppStore((s) => s.activeDate);
+  const setActiveDate = useAppStore((s) => s.setActiveDate);
+  const setLiveCount = useAppStore((s) => s.setLiveCount);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMatches(generateMatches());
-      setIsLoading(false);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [date]);
+    if (allMatches.length === 0) {
+      setAllMatches(generateMatches());
+    }
+  }, [allMatches.length, setAllMatches]);
 
-  return { matches, isLoading, filter, setFilter, date, setDate, searchQuery, setSearchQuery };
+  useEffect(() => {
+    const count = allMatches.filter((m) => m.status === 'live' || m.status === 'ht').length;
+    setLiveCount(count);
+  }, [allMatches, setLiveCount]);
+
+  const dateFiltered = useMemo(
+    () => allMatches.filter((m) => isSameRelativeDay(m.startTime, activeDate)),
+    [allMatches, activeDate]
+  );
+
+  const isLoading = allMatches.length === 0;
+
+  return {
+    matches: dateFiltered,
+    allMatches,
+    isLoading,
+    filter: activeFilter as MatchFilter,
+    setFilter: setActiveFilter,
+    date: activeDate,
+    setDate: setActiveDate,
+    searchQuery,
+    setSearchQuery,
+  };
 }

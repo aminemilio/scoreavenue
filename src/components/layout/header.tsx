@@ -12,14 +12,14 @@ export function Header() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 h-14 z-[250] flex items-center justify-between px-4 border-b transition-colors"
-      style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)' }}
+      className="fixed top-0 left-0 right-0 h-14 z-[250] flex items-center justify-between px-4 border-b"
+      style={{ backgroundColor: 'var(--header-bg)', borderColor: 'rgba(255,255,255,0.08)' }}
     >
       <div className="flex items-center gap-3">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 rounded-lg transition-colors hover:opacity-70"
-          style={{ color: 'var(--text-2)' }}
+          className="p-2 rounded-lg transition-colors hover:bg-white/10"
+          style={{ color: 'var(--header-text-muted)' }}
           aria-label="Toggle menu"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -28,7 +28,7 @@ export function Header() {
             <line x1="3" y1="18" x2="21" y2="18" />
           </svg>
         </button>
-        <Logo className="text-lg" />
+        <Logo className="text-lg" variant="light" />
       </div>
 
       <div className="flex items-center gap-3">
@@ -40,8 +40,8 @@ export function Header() {
         )}
         <button
           onClick={toggleTheme}
-          className="p-2 rounded-lg transition-colors"
-          style={{ color: 'var(--text-2)', backgroundColor: 'var(--surface)' }}
+          className="p-2 rounded-lg transition-colors hover:bg-white/10"
+          style={{ color: 'var(--header-text-muted)' }}
           aria-label="Toggle theme"
         >
           {theme === 'dark' ? (

@@ -33,19 +33,9 @@ export default function HomePage() {
     return g;
   }, [filtered]);
 
-  const liveCount = useMemo(() => matches.filter(m => m.sport === activeSport && (m.status === 'live' || m.status === 'ht')).length, [matches, activeSport]);
-
   return (
     <div className="flex flex-col h-full">
-      <div className="px-4 py-3 flex items-center gap-3">
-        <h1 className="text-base font-bold text-[var(--text)]">{t('nav.all_sports')}</h1>
-        {liveCount > 0 && (
-          <span className="bg-[#FF3B30] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
-            {liveCount} LIVE
-          </span>
-        )}
-      </div>
-      <div className="px-4 pb-2">
+      <div className="px-4 pt-3 pb-2">
         <input
           type="text"
           value={search}

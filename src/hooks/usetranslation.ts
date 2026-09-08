@@ -1,3 +1,4 @@
+import { useLocaleContext } from '@/components/layout/localeprovider';
 import fr from '../messages/fr.json';
 import en from '../messages/en.json';
 import ar from '../messages/ar.json';
@@ -15,12 +16,7 @@ function getNestedValue(obj: any, key: string): string {
 }
 
 export function useTranslations(namespace?: string) {
-  let locale = 'fr';
-  try {
-    if (typeof window !== 'undefined') {
-      locale = localStorage.getItem('sa_locale') || 'fr';
-    }
-  } catch {}
+  const locale = useLocaleContext();
   const messages = allMessages[locale] || allMessages.fr;
 
   return function t(key: string): string {
@@ -30,10 +26,5 @@ export function useTranslations(namespace?: string) {
 }
 
 export function useLocale() {
-  try {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('sa_locale') as any) || 'fr';
-    }
-  } catch {}
-  return 'fr';
+  return useLocaleContext();
 }

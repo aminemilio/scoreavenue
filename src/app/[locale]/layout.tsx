@@ -1,6 +1,9 @@
 import { Suspense } from 'react';
+import { LocaleProvider } from '@/components/layout/localeprovider';
+import { AppLayout } from '@/components/layout/applayout';
 
-const VALID_LOCALES = ['fr', 'en', 'ar', 'es'];
+const VALID_LOCALES = ['fr', 'en', 'ar', 'es'] as const;
+type Locale = typeof VALID_LOCALES[number];
 
 interface Props {
   children: React.ReactNode;
@@ -8,18 +11,21 @@ interface Props {
 }
 
 export default async function LocaleLayout({ children, params }: Props) {
-  let locale = 'fr';
+  let locale: Locale = 'fr';
   try {
     const resolved = await params;
-    locale = resolved?.locale || 'fr';
+    if (resolved?.locale && (VALID_LOCALES as readonly string[]).includes(resolved.locale)) {
+      locale = resolved.locale as Locale;
+    }
   } catch {}
-  if (!VALID_LOCALES.includes(locale)) locale = 'fr';
 
   return (
     <div dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <Suspense fallback={<div className="p-8 text-center" style={{ color: 'var(--text-3)' }}>Loading...</div>}>
-        {children}
-      </Suspense>
+      <LocaleProvider locale={locale}>
+        <Suspense fallback={<div className="p-8 text-center" style={{ color: 'var(--text-3)' }}>Loading...</div>}>
+          <AppLayout>{children}</AppLayout>
+        </Suspense>
+      </LocaleProvider>
     </div>
   );
 }

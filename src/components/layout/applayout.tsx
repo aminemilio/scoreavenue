@@ -3,6 +3,7 @@
 import { type ReactNode } from 'react';
 import { NewsTicker } from './newsticker';
 import { useAppStore } from '@/stores/useappstore';
+import { useMatches } from '@/hooks';
 import { Header } from './header';
 import dynamic from 'next/dynamic';
 
@@ -14,12 +15,12 @@ const DateSelector = dynamic(() => import('./dateselector').then(m => ({ default
 
 interface Props {
   children: ReactNode;
-  matches?: any[];
   showFilters?: boolean;
 }
 
-export function AppLayout({ children, matches = [], showFilters = true }: Props) {
+export function AppLayout({ children, showFilters = true }: Props) {
   const sidebarOpen = useAppStore((s) => s.sidebarOpen);
+  const { allMatches } = useMatches();
 
   return (
     <div className="min-h-screen transition-colors" style={{ backgroundColor: 'var(--bg)', color: 'var(--text)' }}>
@@ -28,8 +29,8 @@ export function AppLayout({ children, matches = [], showFilters = true }: Props)
       <div className={`transition-[margin] duration-200 ${sidebarOpen ? 'ml-[280px]' : 'ml-0'}`}>
         <div className="pt-[56px]">
           <NewsTicker />
-          <Ticker matches={matches} />
-          <SportTabs matches={matches} />
+          <Ticker matches={allMatches} />
+          <SportTabs matches={allMatches} />
           {showFilters && <><FilterBar /><DateSelector /></>}
           {children}
         </div>
