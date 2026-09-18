@@ -1,0 +1,13 @@
+{
+  "name": "ScoreAvenue",
+  "short_name": "ScoreAvenue",
+  "description": "Live sports scores for all major sports",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#080808",
+  "theme_color": "#FF3B30",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

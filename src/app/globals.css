@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--neon-bg: #090D16;
+	--neon-surface: #131B2E;
+	--neon-elevated: #1E293B;
+	--neon-green: #00FF87;
+	--neon-purple: #8B5CF6;
+	--neon-text: #F8FAFC;
+	--neon-muted: #64748B;
+	--neon-slate: #475569;
+	--neon-danger: #EF4444;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+	background: var(--neon-bg);
+	color: var(--neon-text);
+	font-family: var(--font-geist-sans), 'Trebuchet MS', sans-serif;
+	-webkit-font-smoothing: antialiased;
+	background-image: radial-gradient(circle at 50% -20%, rgba(139, 92, 246, 0.12), transparent 34rem);
+}
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--neon-bg); }
+::-webkit-scrollbar-thumb { background: var(--neon-elevated); border-radius: 2px; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
+button, a, input { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--neon-green); outline-offset: 2px; }
