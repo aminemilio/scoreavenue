@@ -1,101 +1,132 @@
 import { NewsTicker } from '@/components/ui/NewsTicker'
 import { ScoresFeed } from '@/components/scores/ScoresFeed'
-import { Brain, Users, Bell } from 'lucide-react'
+import { Bell, ShieldCheck, Sparkles, Trophy, Zap } from 'lucide-react'
+
+const majorSports = ['Football', 'Basketball', 'Handball', 'Tennis', 'Volleyball', 'MMA', 'Boxing', 'Esports', 'Formula 1', 'Padel']
+const featuredLeagues = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'NBA', 'NHL', 'ATP Tour', 'UFC', 'Formula 1']
+
+const quickStats = [
+  { label: 'Live matches', value: '128', tone: 'text-lime-300' },
+  { label: 'Scheduled', value: '341', tone: 'text-sky-300' },
+  { label: 'Leagues', value: '46', tone: 'text-violet-300' },
+]
 
 export default function HomePage() {
   return (
     <>
-      <NewsTicker/>
+      <NewsTicker />
+
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-5">
-              <div>
-                <h1 className="text-xl font-bold text-white">Live Scores</h1>
-                <p className="text-[#555] text-sm mt-0.5">Updated every minute · Sports ranked for your country</p>
-              </div>
-              <div className="flex items-center gap-1.5 text-lime-300 text-xs font-bold bg-lime-300/10 px-3 py-1.5 rounded-full">
-                <span className="w-1.5 h-1.5 rounded-full bg-lime-300 animate-pulse"/>LIVE NOW
-              </div>
+        <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+          <div>
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-lime-400/30 bg-lime-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-lime-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-lime-300 animate-pulse" />
+              Matchday centre
             </div>
-            <ScoresFeed/>
+            <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">Live sports coverage built for real fans.</h1>
+            <p className="mt-2 max-w-2xl text-sm text-slate-400 md:text-[15px]">
+              Follow the competitions that matter most, from major league football to finals, live match events and the most active matchday moments.
+            </p>
           </div>
-          <aside className="w-full lg:w-72 xl:w-80 space-y-4 shrink-0">
-            <div className="border border-[#1A1A1A] rounded-xl p-4 bg-gradient-to-br from-[#111] to-[#0D0D0D]">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center"><Brain size={14} className="text-red-400"/></div>
-                <h2 className="text-sm font-semibold text-white">AI Match Preview</h2>
-                <span className="ml-auto text-[10px] bg-red-600 text-white px-2 py-0.5 rounded font-bold">PRO</span>
-              </div>
-              <p className="text-[12px] text-[#888] leading-relaxed mb-3">
-                Arsenal enter this match in exceptional form — 8 wins in last 10. Man City missing Rodri. AI gives Arsenal a <span className="text-green-400 font-semibold">67% win probability</span>.
-              </p>
-              <div className="flex gap-2 text-[11px] mb-3">
-                {[['67%','Arsenal'],['18%','Draw'],['15%','Man City']].map(([pct,lbl]) => (
-                  <div key={lbl} className="flex-1 bg-[#1A1A1A] rounded-lg p-2 text-center">
-                    <div className="text-white font-bold">{pct}</div>
-                    <div className="text-[#555] mt-0.5">{lbl}</div>
-                  </div>
-                ))}
-              </div>
-              <button className="w-full py-2 bg-red-600 hover:bg-red-700 text-white text-[12px] font-semibold rounded-lg transition-colors">Unlock AI Predictions</button>
-            </div>
 
-            <div className="border border-[#1A1A1A] rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center"><Users size={14} className="text-blue-400"/></div>
-                <h2 className="text-sm font-semibold text-white">Fan Box</h2>
-                <span className="ml-auto text-[10px] text-[#555]">1,284 online</span>
+          <div className="grid grid-cols-3 gap-2 md:min-w-[320px]">
+            {quickStats.map((item) => (
+              <div key={item.label} className="rounded-xl border border-[#1A1F2C] bg-[#0E1420] px-3 py-3 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
+                <div className="text-[10px] uppercase tracking-[0.12em] text-slate-500">{item.label}</div>
+                <div className={`mt-2 text-xl font-semibold ${item.tone}`}>{item.value}</div>
               </div>
-              <div className="space-y-2.5">
-                {[
-                  {user:'GoalMachine',msg:"Saka has been unreal today 🔥",time:'2m',flag:'🏴'},
-                  {user:'MadridFan99',msg:"Bellingham saving us again!!!",time:'3m',flag:'🇪🇸'},
-                  {user:'KloppsArmy',msg:"Salah is just different class",time:'5m',flag:'🏴'},
-                  {user:'DZFootball',msg:"Mahrez would score that easily",time:'6m',flag:'🇩🇿'},
-                ].map((c,i) => (
-                  <div key={i} className="flex gap-2">
-                    <div className="w-6 h-6 rounded-full bg-[#2A2A2A] flex items-center justify-center text-[9px] font-bold text-white shrink-0">{c.user[0]}</div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1">
-                        <span className="text-[11px] font-semibold text-white">{c.user}</span>
-                        <span className="text-[9px]">{c.flag}</span>
-                        <span className="text-[10px] text-[#555] ml-auto">{c.time}</span>
-                      </div>
-                      <p className="text-[11px] text-[#888] mt-0.5">{c.msg}</p>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <div className="min-w-0 flex-1">
+            <ScoresFeed />
+          </div>
+
+          <aside className="w-full shrink-0 xl:w-[320px]">
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-[#1A1F2C] bg-[linear-gradient(180deg,#111827_0%,#0B1018_100%)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 text-violet-300">
+                    <Sparkles size={16} />
+                  </div>
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-slate-200">Coverage</h2>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {majorSports.map((sport) => (
+                    <span key={sport} className="rounded-full border border-[#2A3344] bg-[#0F172A] px-2.5 py-1 text-[11px] text-slate-200">
+                      {sport}
+                    </span>
+                  ))}
+                </div>
+
+                <p className="mt-3 text-[12px] leading-relaxed text-slate-400">
+                  Competition priority is driven by live activity, relevance and country-specific demand. When a sport is inactive, it stays visible but clearly marked as pending.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-[#1A1F2C] bg-[#0D1117] p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-300">
+                    <Trophy size={16} />
+                  </div>
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-slate-200">Featured leagues</h2>
+                </div>
+
+                <div className="space-y-2.5">
+                  {featuredLeagues.map((league) => (
+                    <div key={league} className="flex items-center justify-between rounded-xl border border-[#1A1F2C] bg-[#0F172A] px-2.5 py-2.5">
+                      <span className="text-[12px] font-medium text-slate-100">{league}</span>
+                      <span className="inline-flex items-center rounded-full border border-lime-500/30 bg-lime-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-lime-300">
+                        Live
+                      </span>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-              <div className="mt-3 flex gap-2">
-                <input type="text" placeholder="Share your reaction..." className="flex-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg px-3 py-1.5 text-[12px] text-white placeholder-[#555] outline-none focus:border-red-500 transition-colors"/>
-                <button className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-[12px] font-semibold rounded-lg transition-colors">Send</button>
-              </div>
-            </div>
 
-            <div className="border border-[#1A1A1A] rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-base">⚽</span>
-                <h2 className="text-sm font-semibold text-white">Top Scorers</h2>
-                <span className="ml-auto text-[10px] text-[#555]">Premier League</span>
-              </div>
-              <div className="space-y-2">
-                {[{name:'Haaland',team:'Man City',goals:27,flag:'🇳🇴'},{name:'Salah',team:'Liverpool',goals:24,flag:'🇪🇬'},{name:'Saka',team:'Arsenal',goals:18,flag:'🏴'},{name:'Palmer',team:'Chelsea',goals:17,flag:'🏴'},{name:'Watkins',team:'Aston Villa',goals:15,flag:'🏴'}].map((p,i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="text-[11px] text-[#555] w-4">{i+1}</span>
-                    <span className="text-[10px]">{p.flag}</span>
-                    <span className="text-[12px] text-white flex-1">{p.name}</span>
-                    <span className="text-[11px] text-[#555]">{p.team}</span>
-                    <span className="text-[12px] font-bold text-white w-6 text-right">{p.goals}</span>
+              <div className="rounded-2xl border border-[#1A1F2C] bg-[#0D1117] p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-500/10 text-sky-300">
+                    <Zap size={16} />
                   </div>
-                ))}
-              </div>
-            </div>
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-slate-200">Platform health</h2>
+                </div>
 
-            <div className="border border-red-500/20 rounded-xl p-4 bg-red-500/5">
-              <div className="flex items-center gap-2 mb-2"><Bell size={16} className="text-red-400"/><h2 className="text-sm font-semibold text-white">Smart Alerts</h2></div>
-              <p className="text-[12px] text-[#888] mb-3 leading-relaxed">Get notified for goals, red cards, and final scores instantly.</p>
-              <button className="w-full py-2 border border-red-500 text-red-400 hover:bg-red-600 hover:text-white text-[12px] font-semibold rounded-lg transition-all">Enable Alerts</button>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between rounded-xl border border-[#1A1F2C] bg-[#0F172A] px-3 py-2.5">
+                    <span className="text-[12px] text-slate-300">Data refresh</span>
+                    <span className="text-[11px] font-semibold text-lime-300">On time</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl border border-[#1A1F2C] bg-[#0F172A] px-3 py-2.5">
+                    <span className="text-[12px] text-slate-300">Provider resilience</span>
+                    <span className="text-[11px] font-semibold text-violet-300">Hybrid</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl border border-[#1A1F2C] bg-[#0F172A] px-3 py-2.5">
+                    <span className="text-[12px] text-slate-300">Match alerting</span>
+                    <span className="text-[11px] font-semibold text-sky-300">Enabled</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-lime-500/20 bg-lime-500/5 p-4">
+                <div className="mb-2 flex items-center gap-2">
+                  <Bell size={16} className="text-lime-300" />
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-slate-100">Smart alerts</h2>
+                </div>
+                <p className="text-[12px] leading-relaxed text-slate-400">
+                  Goals, cards and late match updates are surfaced only when the active data provider sends them.
+                </p>
+                <div className="mt-3 flex items-center justify-between rounded-xl border border-lime-500/20 bg-[#0F172A] px-3 py-2">
+                  <span className="text-[12px] text-slate-300">Alert status</span>
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-lime-300">
+                    <ShieldCheck size={12} />
+                    Active
+                  </span>
+                </div>
+              </div>
             </div>
           </aside>
         </div>

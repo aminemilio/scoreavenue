@@ -1,9 +1,8 @@
 import { getStandings } from '@/lib/live-scores'
-import { MOCK_STANDINGS } from '@/lib/mock-data'
 
 export default async function StandingsPage() {
   const liveStandings = await getStandings()
-  const leagues = Object.keys(liveStandings).length ? Object.entries(liveStandings) : Object.entries(MOCK_STANDINGS)
+  const leagues = Object.entries(liveStandings)
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -53,6 +52,7 @@ export default async function StandingsPage() {
             </div>
           </div>
         ))}
+        {leagues.length === 0 && <div className="rounded-2xl border border-[#1A1A1A] bg-[#0F0F0F] px-4 py-10 text-center text-sm text-[#666]">No live standings are available right now.</div>}
       </div>
     </div>
   )

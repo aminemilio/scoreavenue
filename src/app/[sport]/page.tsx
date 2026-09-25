@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { ArrowLeft, CalendarClock, Trophy } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { getAllMatches as getLiveMatches, getStandings } from '@/lib/live-scores'
-import { getAllMatches as getMockMatches, MOCK_STANDINGS } from '@/lib/mock-data'
 import { SPORT_CATALOG } from '@/lib/country-sports'
 import type { Metadata } from 'next'
 
@@ -27,8 +26,8 @@ export default async function SportPage({ params }: { params: { sport: string } 
     notFound()
   }
 
-  const liveMatches = await getLiveMatches()
-  const matches = (liveMatches.length ? liveMatches : getMockMatches()).filter(group =>
+  const liveMatches = await getLiveMatches(sport.id)
+  const matches = liveMatches.filter(group =>
     group.matches.some(match => match.sport === sportKey)
   )
 
@@ -37,7 +36,6 @@ export default async function SportPage({ params }: { params: { sport: string } 
   )
 
   const liveStandings = await getStandings()
-  const standingsSource = Object.keys(liveStandings).length ? liveStandings : MOCK_STANDINGS
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -58,7 +56,7 @@ export default async function SportPage({ params }: { params: { sport: string } 
 
       <div className="grid gap-4">
         {filteredMatches.map(match => (
-          <Link key={match.id} href={`/match/${match.id}`} className="block border border-[#1A1A1A] rounded-2xl bg-[#0F0F0F] p-4 hover:border-[#2A2A2A] transition-colors">
+          <Link key={match.id} href={`/match/${match.id}?sport=${encodeURIComponent(match.sport)}`} className="block border border-[#1A1A1A] rounded-2xl bg-[#0F0F0F] p-4 hover:border-[#2A2A2A] transition-colors">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div className="flex items-center gap-3">
                 <span className="rounded-full bg-red-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-red-300">{match.status.short}</span>
@@ -95,7 +93,7 @@ export default async function SportPage({ params }: { params: { sport: string } 
             <h2 className="text-sm font-semibold text-white">Top standings</h2>
           </div>
           <div className="space-y-2">
-            {(standingsSource['Premier League'] ?? []).slice(0, 4).map((row, index) => (
+            {(liveStandings['Premier League'] ?? []).slice(0, 4).map((row, index) => (
               <div key={row.team} className="flex items-center justify-between rounded-lg bg-[#101010] px-3 py-2">
                 <div className="flex items-center gap-3">
                   <span className="text-[11px] text-[#666]">{index + 1}</span>
@@ -104,6 +102,7 @@ export default async function SportPage({ params }: { params: { sport: string } 
                 <span className="text-[12px] text-[#777]">{row.points} pts</span>
               </div>
             ))}
+            {(liveStandings['Premier League'] ?? []).length === 0 && <p className="text-sm text-[#666]">No live standings available.</p>}
           </div>
         </div>
       )}

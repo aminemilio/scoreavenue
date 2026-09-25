@@ -3,14 +3,12 @@ import { ArrowLeft, CalendarDays, MapPin, Trophy } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getAllMatches as getLiveMatches } from '@/lib/live-scores'
-import { getAllMatches as getMockMatches, MOCK_STANDINGS } from '@/lib/mock-data'
 
-async function findMatch(id: string) {
-  const liveMatches = await getLiveMatches()
-  const allMatches = liveMatches.length ? liveMatches : getMockMatches()
-  return allMatches
+async function findMatch(id: string, sport?: string) {
+  const liveMatches = await getLiveMatches((sport as import('@/types').Sport | undefined) ?? 'football')
+  return liveMatches
     .flatMap(group => group.matches)
-    .find(item => item.id === Number(id))
+    .find(item => String(item.id) === id)
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
@@ -30,17 +28,16 @@ function formatScore(value: number | null) {
   return value ?? 0
 }
 
-export default async function MatchDetailsPage({ params }: { params: { id: string } }) {
-  const matchId = Number(params.id)
-  const match = await findMatch(params.id)
+export default async function MatchDetailsPage({ params, searchParams }: { params: { id: string }; searchParams: { sport?: string } }) {
+  const match = await findMatch(params.id, searchParams.sport)
 
   if (!match) {
     notFound()
   }
 
-  const liveMatches = await getLiveMatches()
-  const standingsSource = liveMatches.length ? (await import('@/lib/live-scores')).getStandings() : Promise.resolve(MOCK_STANDINGS)
-  const standings = (await standingsSource)[match.league.name] ?? []
+  const standings = await (await import('@/lib/live-scores')).getStandings()
+    .then(data => data[match.league.name] ?? [])
+    .catch(() => [])
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -82,7 +79,7 @@ export default async function MatchDetailsPage({ params }: { params: { id: strin
                 <p className="text-2xl font-bold text-white">{match.homeTeam.name}</p>
                 <p className="text-xs text-[#666]">{match.homeTeam.shortName}</p>
               </div>
-              <div className="w-14 h-14 rounded-full bg-[#1A1A1A] flex items-center justify-center text-lg font-bold text-white">{match.homeTeam.shortName.slice(0, 2)}</div>
+              <div className="w-14 h-14 rounded-full bg-[#1A1A1A] flex items-center justify-center text-lg font-bold text-white overflow-hidden">{match.homeTeam.logo ? <img src={match.homeTeam.logo} alt="" className="w-full h-full object-contain" /> : match.homeTeam.shortName.slice(0, 2)}</div>
             </div>
 
             <div className="flex items-center gap-4 justify-center">
@@ -92,7 +89,7 @@ export default async function MatchDetailsPage({ params }: { params: { id: strin
             </div>
 
             <div className="flex items-center justify-start gap-3">
-              <div className="w-14 h-14 rounded-full bg-[#1A1A1A] flex items-center justify-center text-lg font-bold text-white">{match.awayTeam.shortName.slice(0, 2)}</div>
+              <div className="w-14 h-14 rounded-full bg-[#1A1A1A] flex items-center justify-center text-lg font-bold text-white overflow-hidden">{match.awayTeam.logo ? <img src={match.awayTeam.logo} alt="" className="w-full h-full object-contain" /> : match.awayTeam.shortName.slice(0, 2)}</div>
               <div>
                 <p className="text-2xl font-bold text-white">{match.awayTeam.name}</p>
                 <p className="text-xs text-[#666]">{match.awayTeam.shortName}</p>

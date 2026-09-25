@@ -16,6 +16,19 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Live score providers
+
+The server can merge any configured providers. Copy `.env.example` to `.env.local`, then add keys from the providers you have access to:
+
+- **RapidAPI / SportAPI**: broad multi-sport coverage through `RAPIDAPI_HOST` and `RAPIDAPI_KEY`.
+- **Highlightly**: configure `HIGHLIGHTLY_API_KEY` and confirm the live endpoint for your plan with Highlightly support.
+- **API-Football**: football coverage through `API_FOOTBALL_KEY`.
+- **SportsDataIO**: league-focused NFL, NBA, MLB, NHL, PGA, and other products through `SPORTSDATAIO_KEY`.
+
+Requests run server-side, failed providers are ignored, and matching events from multiple providers are deduplicated. Provider coverage and rate limits vary by plan, so using every key does not automatically add every sport. API-Football and SportsDataIO are specialist fallbacks, while a broad RapidAPI provider should remain the main source for sports outside their listed leagues.
+
+Additional sources worth evaluating are TheSportsDB, OpenLigaDB for supported football competitions, API-Sports products beyond football, and ESPN scoreboard endpoints where their terms and stability permit use. Confirm redistribution rights, attribution requirements, and rate limits before production use.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

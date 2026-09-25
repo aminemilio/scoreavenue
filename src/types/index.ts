@@ -1,4 +1,4 @@
-export type Sport = 'football' | 'basketball' | 'tennis' | 'hockey' | 'baseball' | 'rugby' | 'cricket' | 'cycling' | 'boxing' | 'volleyball' | 'handball' | 'athletics' | 'swimming' | 'skiing' | 'golf' | 'mma' | 'badminton' | 'kabaddi' | 'sumo' | 'esports' | 'futsal' | 'polo' | 'squash' | 'netball' | 'rally' | 'muay thai' | 'water polo' | 'gymnastics' | 'wrestling'
+export type Sport = 'football' | 'basketball' | 'tennis' | 'hockey' | 'baseball' | 'rugby' | 'cricket' | 'cycling' | 'boxing' | 'volleyball' | 'handball' | 'athletics' | 'swimming' | 'skiing' | 'golf' | 'mma' | 'badminton' | 'kabaddi' | 'sumo' | 'esports' | 'futsal' | 'polo' | 'squash' | 'netball' | 'rally' | 'muay thai' | 'water polo' | 'gymnastics' | 'wrestling' | 'formula1' | 'padel'
 
 export interface Team {
   id: number
@@ -37,6 +37,7 @@ export interface Match {
   league: League
   date: string
   venue?: string
+  source?: string
   sport: Sport
   events?: MatchEvent[]
   stats?: MatchStat[]

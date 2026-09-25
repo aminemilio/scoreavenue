@@ -2,25 +2,23 @@
 import { useState, useEffect, useCallback } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { LeagueGroup, Sport } from '@/types'
-import { MOCK_FOOTBALL, MOCK_NBA } from '@/lib/mock-data'
 import { LeagueSection } from './LeagueSection'
 import { isLive, isFinished, isUpcoming } from '@/lib/utils'
 import { useCountrySports } from '@/hooks/useCountrySports'
-import { SPORT_CATALOG } from '@/lib/country-sports'
-
-const fallbackData = (selectedSport: Sport) => selectedSport === 'football' ? MOCK_FOOTBALL : selectedSport === 'basketball' ? MOCK_NBA : []
+import { SPORT_CATALOG, SPORT_LEAGUES } from '@/lib/country-sports'
 
 type Filter = 'all' | 'live' | 'finished' | 'upcoming'
 const DAY_LABELS: Record<string, string> = { '-2':'2 days ago','-1':'Yesterday','0':'Today','1':'Tomorrow','2':'In 2 days' }
 
 export function ScoresFeed() {
-  const { profile, sportOrder, loading: countryLoading } = useCountrySports()
+  const { countryCode, sportOrder, loading: countryLoading } = useCountrySports()
   const [sport, setSport] = useState<Sport>('football')
   const [filter, setFilter] = useState<Filter>('all')
-  const [day, setDay] = useState(0)
+  const [day, setDay] = useState<number | null>(null)
+  const [leagueFilter, setLeagueFilter] = useState<string | null>(null)
   const [data, setData] = useState<LeagueGroup[]>([])
   const [loading, setLoading] = useState(true)
-  const [lastUpdate, setLastUpdate] = useState(new Date())
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
   const [refreshing, setRefreshing] = useState(false)
   const [initialized, setInitialized] = useState(false)
 
@@ -31,17 +29,16 @@ export function ScoresFeed() {
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/live-scores?sport=${encodeURIComponent(sport)}`, { cache: 'no-store' })
+        const response = await fetch(`/api/live-scores?sport=${encodeURIComponent(sport)}&country=${encodeURIComponent(countryCode)}`, { cache: 'no-store' })
       const payload = response.ok ? await response.json() : []
-      const nextData = Array.isArray(payload) && payload.length > 0 ? payload : fallbackData(sport)
-      setData(nextData)
+      setData(Array.isArray(payload) ? payload : [])
     } catch {
-      setData(fallbackData(sport))
+      setData([])
     } finally {
       setLastUpdate(new Date())
       setLoading(false)
     }
-  }, [sport])
+  }, [countryCode, sport])
 
   useEffect(() => { loadData() }, [loadData])
   useEffect(() => { const i = setInterval(loadData, 60000); return () => clearInterval(i) }, [loadData])
@@ -53,8 +50,9 @@ export function ScoresFeed() {
   const filtered = data.map(g => ({
     ...g,
     matches: g.matches.filter(m => {
+      if (leagueFilter && m.league.name !== leagueFilter) return false
       const matchDay = Math.round((new Date(m.date).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / 86400000)
-      if (matchDay !== day) return false
+      if (day !== null && matchDay !== day) return false
       if (filter === 'live') return isLive(m.status)
       if (filter === 'finished') return isFinished(m.status)
       if (filter === 'upcoming') return isUpcoming(m.status)
@@ -64,28 +62,53 @@ export function ScoresFeed() {
 
   const totalLive = data.flatMap(g => g.matches).filter(m => isLive(m.status)).length
 
+  const toggleLeagueFilter = (league: string) => {
+    setLeagueFilter(current => current === league ? null : league)
+  }
+
+  const selectSport = (nextSport: Sport) => {
+    setSport(nextSport)
+    setFilter('all')
+    setDay(0)
+    setLeagueFilter(null)
+  }
+
   return (
     <div>
-      <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide">
-        {orderedSports.map((s, idx) => (
-          <button key={s.id} type="button" onClick={() => { setSport(s.id); setFilter('all') }}
-            aria-pressed={sport === s.id}
-            className={`relative flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[13px] font-medium border transition-all whitespace-nowrap cursor-pointer
-              ${sport === s.id ? 'bg-[#00FF87] border-[#00FF87] text-[#090D16]' : 'border-[#1E293B] text-[#64748B] hover:border-[#00FF87]/50 hover:text-white'}`}>
-            <span>{s.emoji}</span>{s.label}
-            {idx === 0 && <span className={`absolute -top-1.5 -right-1.5 text-[8px] font-bold px-1 rounded-full ${sport === s.id ? 'bg-[#090D16] text-[#00FF87]' : 'bg-[#00FF87] text-[#090D16]'}`}>#1</span>}
-          </button>
-        ))}
-      </div>
-
-      {profile.topLeagues.length > 0 && (
-        <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-1">
-          <span className="text-[10px] text-[#555] shrink-0">Top:</span>
-          {profile.topLeagues.slice(0, 4).map(l => (
-            <span key={l} className="text-[11px] text-[#888] bg-[#111] border border-[#2A2A2A] px-2.5 py-1 rounded-full whitespace-nowrap hover:border-[#444] hover:text-white cursor-pointer transition-colors">{l}</span>
+      <div className="mb-3 rounded-2xl border border-[#151d2a] bg-[#0d1220] p-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide snap-x">
+          {orderedSports.map((s) => (
+            <button key={s.id} type="button" onClick={() => selectSport(s.id)}
+              aria-pressed={sport === s.id}
+              className={`flex shrink-0 snap-start items-center gap-1.5 rounded-xl border px-3.5 py-2 text-[12px] font-medium transition-all whitespace-nowrap cursor-pointer
+                ${sport === s.id ? 'bg-[#00FF87] border-[#00FF87] text-[#090D16]' : 'border-[#1E293B] text-[#64748B] hover:border-[#00FF87]/50 hover:text-white'}`}>
+              <span aria-hidden="true">{s.emoji}</span>{s.label}
+            </button>
           ))}
         </div>
-      )}
+      </div>
+
+      <div className="mb-4 rounded-2xl border border-[#151d2a] bg-[#0d1220] px-3 py-3">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#64748B]">Major competitions</p>
+            <p className="mt-0.5 text-[11px] text-[#475569]">{SPORT_CATALOG.find(item => item.id === sport)?.label} coverage</p>
+          </div>
+          {leagueFilter && <button type="button" onClick={() => setLeagueFilter(null)} className="text-[10px] text-[#00FF87] hover:text-white">Clear league</button>}
+        </div>
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+          {SPORT_LEAGUES[sport].map(l => (
+            <button
+              key={l}
+              type="button"
+              onClick={() => toggleLeagueFilter(l)}
+              className={`text-[11px] whitespace-nowrap rounded-full border px-2.5 py-1 transition-colors ${leagueFilter === l ? 'border-lime-400 bg-lime-400/10 text-lime-300' : 'border-[#2A2A2A] bg-[#111] text-[#888] hover:border-[#444] hover:text-white'}`}
+            >
+              {l}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         {(['all','live','finished','upcoming'] as Filter[]).map(f => (
@@ -97,9 +120,10 @@ export function ScoresFeed() {
           </button>
         ))}
         <div className="flex items-center gap-1 ml-auto">
-          <button type="button" onClick={() => setDay(d => d-1)} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#2A2A2A] text-[#555] hover:text-white text-sm cursor-pointer">‹</button>
-          <span className="text-[12px] text-[#888] min-w-[70px] text-center">{DAY_LABELS[String(day)] ?? (day > 0 ? `+${day}d` : `${day}d`)}</span>
-          <button type="button" onClick={() => setDay(d => d+1)} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#2A2A2A] text-[#555] hover:text-white text-sm cursor-pointer">›</button>
+          <button type="button" onClick={() => setDay(d => d === null ? -1 : d - 1)} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#2A2A2A] text-[#555] hover:text-white text-sm cursor-pointer">‹</button>
+            <span className="text-[12px] text-[#888] min-w-[70px] text-center">{day === null ? 'All dates' : DAY_LABELS[String(day)] ?? (day > 0 ? `+${day}d` : `${day}d`)}</span>
+          <button type="button" onClick={() => setDay(d => d === null ? 1 : d + 1)} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#2A2A2A] text-[#555] hover:text-white text-sm cursor-pointer">›</button>
+          <button type="button" onClick={() => setDay(null)} className={`px-2 h-7 rounded-lg border text-[10px] cursor-pointer ${day === null ? 'border-[#00FF87] text-[#00FF87]' : 'border-[#2A2A2A] text-[#555] hover:text-white'}`}>All</button>
         </div>
       </div>
 
@@ -135,7 +159,7 @@ export function ScoresFeed() {
       )}
 
       <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#1A1A1A]">
-        <span className="text-[11px] text-[#555]">{filtered.flatMap(g => g.matches).length} matches · {lastUpdate.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'})}</span>
+        <span className="text-[11px] text-[#555]">{filtered.flatMap(g => g.matches).length} matches · {lastUpdate ? lastUpdate.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}) : 'Loading...'}</span>
         <button type="button" onClick={refresh} className="flex items-center gap-1.5 text-[11px] text-[#555] hover:text-white transition-colors cursor-pointer">
           <RefreshCw size={12} className={refreshing ? 'animate-spin' : ''}/>Refresh
         </button>

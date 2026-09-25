@@ -6,12 +6,12 @@ import { Match } from '@/types'
 import { isLive, isFinished, isUpcoming, formatMatchTime } from '@/lib/utils'
 import { LiveBadge } from '@/components/ui/LiveBadge'
 
-function TeamCrest({ name, color }: { name: string; color?: string }) {
+function TeamCrest({ name, logo, color }: { name: string; logo?: string; color?: string }) {
   const initials = name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase()
   return (
-    <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
+    <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 overflow-hidden"
       style={{ background: color ? `${color}22` : '#2A2A2A', color: color || '#888' }}>
-      {initials}
+      {logo ? <img src={logo} alt="" className="w-full h-full object-contain" onError={event => { event.currentTarget.style.display = 'none' }} /> : initials}
     </div>
   )
 }
@@ -56,7 +56,7 @@ export function MatchCard({ match }: { match: Match }) {
           <span className={`text-[13px] text-right truncate ${homeWins ? 'text-white font-semibold' : awayWins ? 'text-[#555]' : 'text-white'}`}>
             {match.homeTeam.name}
           </span>
-          <TeamCrest name={match.homeTeam.name} color={match.homeTeam.color} />
+          <TeamCrest name={match.homeTeam.name} logo={match.homeTeam.logo} color={match.homeTeam.color} />
         </div>
 
         <div className="flex items-center gap-1 justify-center min-w-[52px]">
@@ -76,7 +76,7 @@ export function MatchCard({ match }: { match: Match }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <TeamCrest name={match.awayTeam.name} color={match.awayTeam.color} />
+          <TeamCrest name={match.awayTeam.name} logo={match.awayTeam.logo} color={match.awayTeam.color} />
           <span className={`text-[13px] truncate ${awayWins ? 'text-white font-semibold' : homeWins ? 'text-[#555]' : 'text-white'}`}>
             {match.awayTeam.name}
           </span>
@@ -93,7 +93,7 @@ export function MatchCard({ match }: { match: Match }) {
             <Bell size={14} />
           </button>
           <Link
-            href={`/match/${match.id}`}
+            href={`/match/${match.id}?sport=${encodeURIComponent(match.sport)}`}
             onClick={e => e.stopPropagation()}
             className="text-[10px] font-semibold uppercase tracking-wide text-[#888] hover:text-white transition-colors"
           >
